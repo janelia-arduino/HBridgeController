@@ -13,16 +13,18 @@
 #include "ModularServer.h"
 #include "ModularDevice.h"
 
+#include "HBridgeController.h"
 
-ModularDevice modular_device;
+
+HBridgeController h_bridge_controller;
 
 void setup()
 {
-  modular_device.setup();
-  modular_device.startServer();
+  h_bridge_controller.setup();
+  h_bridge_controller.startServer();
 }
 
 void loop()
 {
-  modular_device.update();
+  h_bridge_controller.update();
 }

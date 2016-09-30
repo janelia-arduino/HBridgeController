@@ -24,22 +24,22 @@ const Modular::FirmwareInfo firmware_info =
 
 #if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
 
-CONSTANT_STRING(hardware_name,"mega");
+CONSTANT_STRING(hardware_name,"h_bridge_controller");
 const Modular::HardwareInfo hardware_info =
   {
     .name_ptr=&hardware_name,
-    .model_number=0,
-    .version_major=0,
+    .model_number=1170,
+    .version_major=1,
     .version_minor=0,
   };
 
 #elif defined(__MK20DX128__) || defined(__MK20DX256__)
 
-CONSTANT_STRING(hardware_name,"teensy");
+CONSTANT_STRING(hardware_name,"h_bridge_controller");
 const Modular::HardwareInfo hardware_info =
   {
     .name_ptr=&hardware_name,
-    .model_number=0,
+    .model_number=1171,
     .version_major=0,
     .version_minor=0,
   };

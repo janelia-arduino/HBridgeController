@@ -18,16 +18,8 @@ void HBridgeController::setup()
 
   // Device Info
   modular_server_.setDeviceName(constants::device_name);
-  modular_server_.setFormFactor(constants::form_factor);
   modular_server_.addFirmwareInfo(constants::firmware_info);
   modular_server_.addHardwareInfo(constants::hardware_info);
-
-#if defined(__MK20DX128__) || defined(__MK20DX256__)
-  modular_server_.addHardwareInfo(constants::hardware_info_2);
-#endif
-
-  // Add Server Streams
-  modular_server_.addServerStream(Serial);
 
   // Set Storage
 
@@ -37,20 +29,6 @@ void HBridgeController::setup()
 
   // Methods
 
-  // Setup Streams
-  Serial.begin(constants::baudrate);
-
-}
-
-void HBridgeController::startServer()
-{
-  // Start Modular Device Server
-  modular_server_.startServer();
-}
-
-void HBridgeController::update()
-{
-  modular_server_.handleServerRequests();
 }
 
 // Callbacks must be non-blocking (avoid 'delay')

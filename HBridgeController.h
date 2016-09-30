@@ -20,17 +20,16 @@
 #include "SavedVariable.h"
 #include "Functor.h"
 #include "ModularServer.h"
+#include "ModularDevice.h"
 
 #include "utility/Constants.h"
 
 
-class HBridgeController
+class HBridgeController : public ModularDevice
 {
 public:
   HBridgeController();
   virtual void setup();
-  virtual void update();
-  virtual void startServer();
 
 private:
 
