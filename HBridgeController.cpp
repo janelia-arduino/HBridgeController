@@ -8,27 +8,79 @@
 #include "HBridgeController.h"
 
 
+using namespace h_bridge_controller;
+
 HBridgeController::HBridgeController()
 {
 }
 
 void HBridgeController::setup()
 {
-  // Pin Setup
+  // Parent Setup
+  ModularDevice::setup();
 
-  // Device Info
+  // Pin Setup
+  for (int channel=0; channel<constants::CHANNEL_COUNT; ++channel)
+  {
+    pinMode(constants::enable_pins[channel],OUTPUT);
+    digitalWrite(constants::enable_pins[channel],LOW);
+    pinMode(constants::dir_a_pins[channel],OUTPUT);
+    pinMode(constants::dir_b_pins[channel],OUTPUT);
+  }
+
+  // Set Device ID
   modular_server_.setDeviceName(constants::device_name);
+
+  // Add Device Info
   modular_server_.addFirmwareInfo(constants::firmware_info);
   modular_server_.addHardwareInfo(constants::hardware_info);
 
-  // Set Storage
+  // Add Storage
+  modular_server_.addFieldStorage(fields_);
+  modular_server_.addParameterStorage(parameters_);
+  modular_server_.addMethodStorage(methods_);
 
   // Fields
+  modular_server::Field & polarity_reversed_field = modular_server_.createField(constants::polarity_reversed_field_name,constants::polarity_reversed_default);
 
   // Parameters
+  modular_server::Parameter & channel_parameter = modular_server_.createParameter(constants::channel_parameter_name);
+  channel_parameter.setRange(0,constants::CHANNEL_COUNT-1);
+
+  modular_server::Parameter & polarity_parameter = modular_server_.createParameter(constants::polarity_parameter_name);
+  polarity_parameter.setTypeString();
+  polarity_parameter.setSubset(constants::polarity_ptr_subset);
 
   // Methods
+  modular_server::Method & set_channel_on_method = modular_server_.createMethod(constants::set_channel_on_method_name);
+  set_channel_on_method.attachCallback(makeFunctor((Functor0 *)0,*this,&HBridgeController::setChannelOnCallback));
+  set_channel_on_method.addParameter(channel_parameter);
+  set_channel_on_method.addParameter(polarity_parameter);
 
+  modular_server::Method & set_channel_off_method = modular_server_.createMethod(constants::set_channel_off_method_name);
+  set_channel_off_method.attachCallback(makeFunctor((Functor0 *)0,*this,&HBridgeController::setChannelOffCallback));
+  set_channel_off_method.addParameter(channel_parameter);
+
+}
+
+void HBridgeController::setChannelOn(size_t channel, constants::Polarity polarity)
+{
+  if (polarity == constants::POSITIVE)
+  {
+    digitalWrite(constants::dir_a_pins[channel],HIGH);
+    digitalWrite(constants::dir_b_pins[channel],LOW);
+  }
+  else
+  {
+    digitalWrite(constants::dir_a_pins[channel],LOW);
+    digitalWrite(constants::dir_b_pins[channel],HIGH);
+  }
+  digitalWrite(constants::enable_pins[channel],HIGH);
+}
+
+void HBridgeController::setChannelOff(size_t channel)
+{
+  digitalWrite(constants::enable_pins[channel],LOW);
 }
 
 // Callbacks must be non-blocking (avoid 'delay')
@@ -47,3 +99,22 @@ void HBridgeController::setup()
 // modular_server_.setFieldValue type must match the field default type
 // modular_server_.getFieldElementValue type must match the field array element default type
 // modular_server_.setFieldElementValue type must match the field array element default type
+void HBridgeController::setChannelOnCallback()
+{
+  long channel = modular_server_.getParameterValue(constants::channel_parameter_name);
+  const char * polarity = modular_server_.getParameterValue(constants::polarity_parameter_name);
+  if (polarity == constants::polarity_positive)
+  {
+    setChannelOn(channel,constants::POSITIVE);
+  }
+  else
+  {
+    setChannelOn(channel,constants::NEGATIVE);
+  }
+}
+
+void HBridgeController::setChannelOffCallback()
+{
+  long channel = modular_server_.getParameterValue(constants::channel_parameter_name);
+  setChannelOff(channel);
+}

@@ -10,21 +10,21 @@
 #include "ConstantVariable.h"
 #include "SavedVariable.h"
 #include "Functor.h"
+
 #include "ModularServer.h"
 #include "ModularDevice.h"
-
 #include "HBridgeController.h"
 
 
-HBridgeController h_bridge_controller;
+HBridgeController dev;
 
 void setup()
 {
-  h_bridge_controller.setup();
-  h_bridge_controller.startServer();
+  dev.setup();
+  dev.startServer();
 }
 
 void loop()
 {
-  h_bridge_controller.update();
+  dev.update();
 }
