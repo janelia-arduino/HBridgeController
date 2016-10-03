@@ -18,7 +18,7 @@ namespace constants
 //MAX values must be >= 1, >= created/copied count, < RAM limit
 enum{FIELD_COUNT_MAX=1};
 enum{PARAMETER_COUNT_MAX=2};
-enum{METHOD_COUNT_MAX=2};
+enum{METHOD_COUNT_MAX=4};
 
 enum Polarity
   {
@@ -52,6 +52,8 @@ extern const modular_server::SubsetMemberType polarity_ptr_subset[POLARITY_SUBSE
 // Methods
 extern ConstantString set_channel_on_method_name;
 extern ConstantString set_channel_off_method_name;
+extern ConstantString set_all_channels_on_method_name;
+extern ConstantString set_all_channels_off_method_name;
 
 // Errors
 }

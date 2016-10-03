@@ -46,6 +46,8 @@ const modular_server::SubsetMemberType polarity_ptr_subset[POLARITY_SUBSET_LENGT
 // Methods
 CONSTANT_STRING(set_channel_on_method_name,"setChannelOn");
 CONSTANT_STRING(set_channel_off_method_name,"setChannelOff");
+CONSTANT_STRING(set_all_channels_on_method_name,"setAllChannelsOn");
+CONSTANT_STRING(set_all_channels_off_method_name,"setAllChannelsOff");
 
 // Errors
 }

@@ -61,11 +61,27 @@ void HBridgeController::setup()
   set_channel_off_method.attachCallback(makeFunctor((Functor0 *)0,*this,&HBridgeController::setChannelOffCallback));
   set_channel_off_method.addParameter(channel_parameter);
 
+  modular_server::Method & set_all_channels_on_method = modular_server_.createMethod(constants::set_all_channels_on_method_name);
+  set_all_channels_on_method.attachCallback(makeFunctor((Functor0 *)0,*this,&HBridgeController::setAllChannelsOnCallback));
+  set_all_channels_on_method.addParameter(polarity_parameter);
+
+  modular_server::Method & set_all_channels_off_method = modular_server_.createMethod(constants::set_all_channels_off_method_name);
+  set_all_channels_off_method.attachCallback(makeFunctor((Functor0 *)0,*this,&HBridgeController::setAllChannelsOffCallback));
+
 }
 
-void HBridgeController::setChannelOn(size_t channel, constants::Polarity polarity)
+void HBridgeController::setChannelOn(const size_t channel, const constants::Polarity polarity)
 {
-  if (polarity == constants::POSITIVE)
+  bool channel_polarity_reversed;
+  modular_server_.getFieldElementValue(constants::polarity_reversed_field_name,
+                                       channel,
+                                       channel_polarity_reversed);
+  constants::Polarity polarity_corrected = polarity;
+  if (channel_polarity_reversed)
+  {
+    polarity_corrected = ((polarity == constants::POSITIVE) ? constants::NEGATIVE : constants::POSITIVE);
+  }
+  if (polarity_corrected == constants::POSITIVE)
   {
     digitalWrite(constants::dir_a_pins[channel],HIGH);
     digitalWrite(constants::dir_b_pins[channel],LOW);
@@ -78,9 +94,25 @@ void HBridgeController::setChannelOn(size_t channel, constants::Polarity polarit
   digitalWrite(constants::enable_pins[channel],HIGH);
 }
 
-void HBridgeController::setChannelOff(size_t channel)
+void HBridgeController::setChannelOff(const size_t channel)
 {
   digitalWrite(constants::enable_pins[channel],LOW);
+}
+
+void HBridgeController::setAllChannelsOn(const constants::Polarity polarity)
+{
+  for (int channel=0; channel<constants::CHANNEL_COUNT; ++channel)
+  {
+    setChannelOn(channel,polarity);
+  }
+}
+
+void HBridgeController::setAllChannelsOff()
+{
+  for (int channel=0; channel<constants::CHANNEL_COUNT; ++channel)
+  {
+    setChannelOff(channel);
+  }
 }
 
 // Callbacks must be non-blocking (avoid 'delay')
@@ -117,4 +149,22 @@ void HBridgeController::setChannelOffCallback()
 {
   long channel = modular_server_.getParameterValue(constants::channel_parameter_name);
   setChannelOff(channel);
+}
+
+void HBridgeController::setAllChannelsOnCallback()
+{
+  const char * polarity = modular_server_.getParameterValue(constants::polarity_parameter_name);
+  if (polarity == constants::polarity_positive)
+  {
+    setAllChannelsOn(constants::POSITIVE);
+  }
+  else
+  {
+    setAllChannelsOn(constants::NEGATIVE);
+  }
+}
+
+void HBridgeController::setAllChannelsOffCallback()
+{
+  setAllChannelsOff();
 }

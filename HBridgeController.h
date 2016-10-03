@@ -31,8 +31,10 @@ class HBridgeController : public ModularDevice
 public:
   HBridgeController();
   virtual void setup();
-  void setChannelOn(size_t channel, h_bridge_controller::constants::Polarity polarity);
-  void setChannelOff(size_t channel);
+  void setChannelOn(const size_t channel, const h_bridge_controller::constants::Polarity polarity);
+  void setChannelOff(const size_t channel);
+  void setAllChannelsOn(const h_bridge_controller::constants::Polarity polarity);
+  void setAllChannelsOff();
 
 private:
   modular_server::Field fields_[h_bridge_controller::constants::FIELD_COUNT_MAX];
@@ -42,6 +44,8 @@ private:
   // Callbacks
   void setChannelOnCallback();
   void setChannelOffCallback();
+  void setAllChannelsOnCallback();
+  void setAllChannelsOffCallback();
 
 };
 
