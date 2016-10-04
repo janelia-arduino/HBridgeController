@@ -20,6 +20,9 @@
 #include "SavedVariable.h"
 #include "Functor.h"
 
+#include "EventController.h"
+#include "IndexedContainer.h"
+
 #include "ModularServer.h"
 #include "ModularDevice.h"
 
@@ -33,19 +36,37 @@ public:
   virtual void setup();
   void setChannelOn(const size_t channel, const h_bridge_controller::constants::Polarity polarity);
   void setChannelOff(const size_t channel);
+  void setChannelsOn(const uint32_t channels, const h_bridge_controller::constants::Polarity polarity);
+  void setChannelsOff(const uint32_t channels);
   void setAllChannelsOn(const h_bridge_controller::constants::Polarity polarity);
   void setAllChannelsOff();
+  void addPwm(const uint32_t channels,
+              const h_bridge_controller::constants::Polarity polarity,
+              const long delay,
+              const long period,
+              const long on_duration,
+              const long count);
 
 private:
   modular_server::Field fields_[h_bridge_controller::constants::FIELD_COUNT_MAX];
   modular_server::Parameter parameters_[h_bridge_controller::constants::PARAMETER_COUNT_MAX];
   modular_server::Method methods_[h_bridge_controller::constants::METHOD_COUNT_MAX];
 
+  IndexedContainer<h_bridge_controller::constants::PulseInfo,
+                   h_bridge_controller::constants::INDEXED_PULSES_COUNT_MAX> indexed_pulses_;
+
+  uint32_t arrayToChannels(ArduinoJson::JsonArray & channels_array);
+
   // Callbacks
   void setChannelOnCallback();
   void setChannelOffCallback();
+  void setChannelsOnCallback();
+  void setChannelsOffCallback();
   void setAllChannelsOnCallback();
   void setAllChannelsOffCallback();
+  void addPwmCallback();
+  void setChannelsOnCallback(int index);
+  void setChannelsOffCallback(int index);
 
 };
 

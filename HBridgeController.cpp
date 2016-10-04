@@ -19,6 +19,9 @@ void HBridgeController::setup()
   // Parent Setup
   ModularDevice::setup();
 
+  // Event Controller Setup
+  event_controller.setup();
+
   // Pin Setup
   for (int channel=0; channel<constants::CHANNEL_COUNT; ++channel)
   {
@@ -47,9 +50,25 @@ void HBridgeController::setup()
   modular_server::Parameter & channel_parameter = modular_server_.createParameter(constants::channel_parameter_name);
   channel_parameter.setRange(0,constants::CHANNEL_COUNT-1);
 
+  modular_server::Parameter & channels_parameter = modular_server_.createParameter(constants::channels_parameter_name);
+  channels_parameter.setRange(0,constants::CHANNEL_COUNT-1);
+  channels_parameter.setArrayLengthRange(1,constants::CHANNEL_COUNT);
+
   modular_server::Parameter & polarity_parameter = modular_server_.createParameter(constants::polarity_parameter_name);
   polarity_parameter.setTypeString();
   polarity_parameter.setSubset(constants::polarity_ptr_subset);
+
+  modular_server::Parameter & delay_parameter = modular_server_.createParameter(constants::delay_parameter_name);
+  delay_parameter.setRange(constants::delay_min,constants::delay_max);
+
+  modular_server::Parameter & period_parameter = modular_server_.createParameter(constants::period_parameter_name);
+  period_parameter.setRange(constants::period_min,constants::period_max);
+
+  modular_server::Parameter & on_duration_parameter = modular_server_.createParameter(constants::on_duration_parameter_name);
+  on_duration_parameter.setRange(constants::on_duration_min,constants::on_duration_max);
+
+  modular_server::Parameter & count_parameter = modular_server_.createParameter(constants::count_parameter_name);
+  count_parameter.setRange(constants::count_min,constants::count_max);
 
   // Methods
   modular_server::Method & set_channel_on_method = modular_server_.createMethod(constants::set_channel_on_method_name);
@@ -61,6 +80,15 @@ void HBridgeController::setup()
   set_channel_off_method.attachCallback(makeFunctor((Functor0 *)0,*this,&HBridgeController::setChannelOffCallback));
   set_channel_off_method.addParameter(channel_parameter);
 
+  modular_server::Method & set_channels_on_method = modular_server_.createMethod(constants::set_channels_on_method_name);
+  set_channels_on_method.attachCallback(makeFunctor((Functor0 *)0,*this,&HBridgeController::setChannelsOnCallback));
+  set_channels_on_method.addParameter(channels_parameter);
+  set_channels_on_method.addParameter(polarity_parameter);
+
+  modular_server::Method & set_channels_off_method = modular_server_.createMethod(constants::set_channels_off_method_name);
+  set_channels_off_method.attachCallback(makeFunctor((Functor0 *)0,*this,&HBridgeController::setChannelsOffCallback));
+  set_channels_off_method.addParameter(channels_parameter);
+
   modular_server::Method & set_all_channels_on_method = modular_server_.createMethod(constants::set_all_channels_on_method_name);
   set_all_channels_on_method.attachCallback(makeFunctor((Functor0 *)0,*this,&HBridgeController::setAllChannelsOnCallback));
   set_all_channels_on_method.addParameter(polarity_parameter);
@@ -68,6 +96,14 @@ void HBridgeController::setup()
   modular_server::Method & set_all_channels_off_method = modular_server_.createMethod(constants::set_all_channels_off_method_name);
   set_all_channels_off_method.attachCallback(makeFunctor((Functor0 *)0,*this,&HBridgeController::setAllChannelsOffCallback));
 
+  modular_server::Method & add_pwm_method = modular_server_.createMethod(constants::add_pwm_method_name);
+  add_pwm_method.attachCallback(makeFunctor((Functor0 *)0,*this,&HBridgeController::addPwmCallback));
+  add_pwm_method.addPararameter(channels_parameter);
+  add_pwm_method.addPararameter(polarity_parameter);
+  add_pwm_method.addPararameter(delay_parameter);
+  add_pwm_method.addPararameter(period_parameter);
+  add_pwm_method.addPararameter(on_duration_parameter);
+  add_pwm_method.addPararameter(count_parameter);
 }
 
 void HBridgeController::setChannelOn(const size_t channel, const constants::Polarity polarity)
@@ -99,6 +135,30 @@ void HBridgeController::setChannelOff(const size_t channel)
   digitalWrite(constants::enable_pins[channel],LOW);
 }
 
+void HBridgeController::setChannelsOn(const uint32_t channels, const constants::Polarity polarity)
+{
+  uint32_t bit = 1;
+  for (int channel=0; channel<constants::CHANNEL_COUNT; ++channel)
+  {
+    if (channels & (bit << channel))
+    {
+      setChannelOn(channel,polarity);
+    }
+  }
+}
+
+void HBridgeController::setChannelsOff(const uint32_t channels)
+{
+  uint32_t bit = 1;
+  for (int channel=0; channel<constants::CHANNEL_COUNT; ++channel)
+  {
+    if (channels & (bit << channel))
+    {
+      setChannelOff(channel);
+    }
+  }
+}
+
 void HBridgeController::setAllChannelsOn(const constants::Polarity polarity)
 {
   for (int channel=0; channel<constants::CHANNEL_COUNT; ++channel)
@@ -113,6 +173,45 @@ void HBridgeController::setAllChannelsOff()
   {
     setChannelOff(channel);
   }
+}
+
+void HBridgeController::addPwm(const size_t channels,
+                               const h_bridge_controller::constants::Polarity polarity,
+                               const long delay,
+                               const long period,
+                               const long on_duration,
+                               const long count)
+{
+  if (indexed_channels.full())
+  {
+    return;
+  }
+  h_bridge_controller::constants::PulseInfo pulse_info;
+  pulse_info.channels = channels;
+  pulse_info.polarity = polarity;
+  int index = indexed_pulses_.add(pulse_info);
+  EventIdPair event_id_pair = event_controller.addPwmUsingDelay(makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOnCallback),
+                                                                makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOffCallback),
+                                                                delay,
+                                                                period,
+                                                                on_duration,
+                                                                count,
+                                                                index);
+  event_controller.enable(event_id_pair);
+}
+
+uint32_t HBridgeController::arrayToChannels(ArduinoJson::JsonArray & channels_array)
+{
+  uint32_t channels = 0;
+  uint32_t bit = 1;
+  for (ArduinoJson::JsonArray::iterator channels_it=channels_array.begin();
+       channels_it != channels_array.end();
+       ++channels_it)
+  {
+    long channel = *channels_it;
+    channels |= bit << channel;
+  }
+  return channels;
 }
 
 // Callbacks must be non-blocking (avoid 'delay')
@@ -151,6 +250,28 @@ void HBridgeController::setChannelOffCallback()
   setChannelOff(channel);
 }
 
+void HBridgeController::setChannelsOnCallback()
+{
+  ArduinoJson::JsonArray & channels_array = modular_server_.getParameterValue(constants::channels_parameter_name);
+  const char * polarity = modular_server_.getParameterValue(constants::polarity_parameter_name);
+  uint32_t channels = arrayToChannels(channels_array);
+  if (polarity == constants::polarity_positive)
+  {
+    setChannelsOn(channels,constants::POSITIVE);
+  }
+  else
+  {
+    setChannelsOn(channels,constants::NEGATIVE);
+  }
+}
+
+void HBridgeController::setChannelsOffCallback()
+{
+  ArduinoJson::JsonArray & channels_array = modular_server_.getParameterValue(constants::channels_parameter_name);
+  uint32_t channels = arrayToChannels(channels_array);
+  setChannelsOff(channels);
+}
+
 void HBridgeController::setAllChannelsOnCallback()
 {
   const char * polarity = modular_server_.getParameterValue(constants::polarity_parameter_name);
@@ -167,4 +288,16 @@ void HBridgeController::setAllChannelsOnCallback()
 void HBridgeController::setAllChannelsOffCallback()
 {
   setAllChannelsOff();
+}
+
+void HBridgeController::addPwmCallback()
+{
+  ArduinoJson::JsonArray & channels_array = modular_server_.getParameterValue(constants::channels_parameter_name);
+  const char * polarity = modular_server_.getParameterValue(constants::polarity_parameter_name);
+  long delay = modular_server_.getParameterValue(constants::delay_parameter_name);
+  long period = modular_server_.getParameterValue(constants::period_parameter_name);
+  long on_duration = modular_server_.getParameterValue(constants::on_duration_parameter_name);
+  long count = modular_server_.getParameterValue(constants::count_parameter_name);
+  uint32_t channels = arrayToChannels(channels_array);
+  addPwm(channels,polarity,delay,period,on_duration,count);
 }
