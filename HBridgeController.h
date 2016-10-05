@@ -40,12 +40,14 @@ public:
   void setChannelsOff(const uint32_t channels);
   void setAllChannelsOn(const h_bridge_controller::constants::Polarity polarity);
   void setAllChannelsOff();
-  void addPwm(const uint32_t channels,
-              const h_bridge_controller::constants::Polarity polarity,
-              const long delay,
-              const long period,
-              const long on_duration,
-              const long count);
+  int addPwm(const uint32_t channels,
+             const h_bridge_controller::constants::Polarity polarity,
+             const long delay,
+             const long period,
+             const long on_duration,
+             const long count);
+  uint32_t arrayToChannels(ArduinoJson::JsonArray & channels_array);
+  h_bridge_controller::constants::Polarity stringToPolarity(const char * string);
 
 private:
   modular_server::Field fields_[h_bridge_controller::constants::FIELD_COUNT_MAX];
@@ -54,8 +56,6 @@ private:
 
   IndexedContainer<h_bridge_controller::constants::PulseInfo,
                    h_bridge_controller::constants::INDEXED_PULSES_COUNT_MAX> indexed_pulses_;
-
-  uint32_t arrayToChannels(ArduinoJson::JsonArray & channels_array);
 
   // Callbacks
   void setChannelOnCallback();
@@ -67,6 +67,7 @@ private:
   void addPwmCallback();
   void setChannelsOnCallback(int index);
   void setChannelsOffCallback(int index);
+  void removeIndexedPulseCallback(int index);
 
 };
 

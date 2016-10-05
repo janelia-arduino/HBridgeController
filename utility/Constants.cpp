@@ -55,7 +55,7 @@ const long period_min = 2;
 const long period_max = 1000000;
 
 CONSTANT_STRING(on_duration_parameter_name,"on_duration");
-const long on_duration_min = 2;
+const long on_duration_min = 1;
 const long on_duration_max = 1000000;
 
 CONSTANT_STRING(count_parameter_name,"count");
@@ -69,6 +69,10 @@ CONSTANT_STRING(set_channels_on_method_name,"setChannelsOn");
 CONSTANT_STRING(set_channels_off_method_name,"setChannelsOff");
 CONSTANT_STRING(set_all_channels_on_method_name,"setAllChannelsOn");
 CONSTANT_STRING(set_all_channels_off_method_name,"setAllChannelsOff");
+CONSTANT_STRING(add_pwm_method_name,"addPwm");
+CONSTANT_STRING(start_pwm_method_name,"startPwm");
+CONSTANT_STRING(stop_pwm_method_name,"stopPwm");
+CONSTANT_STRING(stop_all_pwm_method_name,"stopAllPwm");
 
 // Errors
 }
