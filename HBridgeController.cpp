@@ -46,6 +46,9 @@ void HBridgeController::setup()
   // Fields
   modular_server::Field & polarity_reversed_field = modular_server_.createField(constants::polarity_reversed_field_name,constants::polarity_reversed_default);
 
+  modular_server::Field & channels_enabled_field = modular_server_.createField(constants::channels_enabled_field_name,constants::channels_enabled_default);
+  channels_enabled_field.attachPostSetElementValueCallback(makeFunctor((Functor1<const size_t> *)0,*this,&HBridgeController::setChannelOff));
+
   // Parameters
   modular_server::Parameter & channel_parameter = modular_server_.createParameter(constants::channel_parameter_name);
   channel_parameter.setRange(0,constants::CHANNEL_COUNT-1);
@@ -133,6 +136,14 @@ void HBridgeController::setup()
 
 void HBridgeController::setChannelOn(const size_t channel, const constants::Polarity polarity)
 {
+  bool channel_enabled;
+  modular_server_.getFieldElementValue(constants::channels_enabled_field_name,
+                                       channel,
+                                       channel_enabled);
+  if (!channel_enabled)
+  {
+    return;
+  }
   bool channel_polarity_reversed;
   modular_server_.getFieldElementValue(constants::polarity_reversed_field_name,
                                        channel,

@@ -29,6 +29,8 @@ extern const size_t sense_pins[CHANNEL_COUNT];
 // Field values must be long, double, bool, long[], double[], bool[], char[], ConstantString *
 extern const bool polarity_reversed_default[CHANNEL_COUNT];
 
+extern const bool channels_enabled_default[CHANNEL_COUNT];
+
 // Parameters
 
 // Methods

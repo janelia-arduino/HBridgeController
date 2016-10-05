@@ -34,6 +34,8 @@ CONSTANT_STRING(ms_unit,"ms");
 // Fields
 CONSTANT_STRING(polarity_reversed_field_name,"polarity_reversed");
 
+CONSTANT_STRING(channels_enabled_field_name,"channels_enabled");
+
 // Parameters
 CONSTANT_STRING(channel_parameter_name,"channel");
 

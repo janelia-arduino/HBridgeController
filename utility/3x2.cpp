@@ -32,6 +32,8 @@ const size_t sense_pins[CHANNEL_COUNT] = {0,1};
 // Fields
 const bool polarity_reversed_default[CHANNEL_COUNT] = {false,false};
 
+const bool channels_enabled_default[CHANNEL_COUNT] = {true,true};
+
 // Parameters
 
 // Methods

@@ -18,7 +18,7 @@ namespace h_bridge_controller
 namespace constants
 {
 //MAX values must be >= 1, >= created/copied count, < RAM limit
-enum{FIELD_COUNT_MAX=1};
+enum{FIELD_COUNT_MAX=2};
 enum{PARAMETER_COUNT_MAX=8};
 enum{METHOD_COUNT_MAX=10};
 
@@ -52,6 +52,8 @@ extern ConstantString ms_unit;
 // Fields
 // Field values must be long, double, bool, long[], double[], bool[], char[], ConstantString *
 extern ConstantString polarity_reversed_field_name;
+
+extern ConstantString channels_enabled_field_name;
 
 // Parameters
 extern ConstantString channel_parameter_name;
