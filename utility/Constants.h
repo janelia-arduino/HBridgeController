@@ -10,6 +10,8 @@
 #include "ConstantVariable.h"
 #include "ModularServer.h"
 
+#include "EventController.h"
+
 
 namespace h_bridge_controller
 {
@@ -17,7 +19,7 @@ namespace constants
 {
 //MAX values must be >= 1, >= created/copied count, < RAM limit
 enum{FIELD_COUNT_MAX=1};
-enum{PARAMETER_COUNT_MAX=7};
+enum{PARAMETER_COUNT_MAX=8};
 enum{METHOD_COUNT_MAX=10};
 
 extern ConstantString device_name;
@@ -35,11 +37,13 @@ enum Polarity
   };
 
 enum{INDEXED_PULSES_COUNT_MAX=4};
+extern const int bad_index;
 
 struct PulseInfo
 {
   uint32_t channels;
   Polarity polarity;
+  EventIdPair event_id_pair;
 };
 
 // Units
@@ -76,6 +80,8 @@ extern ConstantString count_parameter_name;
 extern const long count_min;
 extern const long count_max;
 
+extern ConstantString pwm_index_parameter_name;
+
 // Methods
 extern ConstantString set_channel_on_method_name;
 extern ConstantString set_channel_off_method_name;
@@ -89,6 +95,7 @@ extern ConstantString stop_pwm_method_name;
 extern ConstantString stop_all_pwm_method_name;
 
 // Errors
+extern ConstantString pwm_error;
 }
 }
 #include "5x3.h"

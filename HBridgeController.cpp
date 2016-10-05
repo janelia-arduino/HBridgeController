@@ -74,6 +74,9 @@ void HBridgeController::setup()
   count_parameter.setRange(constants::count_min,constants::count_max);
   count_parameter.setUnits(constants::ms_unit);
 
+  modular_server::Parameter & pwm_index_parameter = modular_server_.createParameter(constants::pwm_index_parameter_name);
+  pwm_index_parameter.setRange(0,constants::INDEXED_PULSES_COUNT_MAX-1);
+
   // Methods
   modular_server::Method & set_channel_on_method = modular_server_.createMethod(constants::set_channel_on_method_name);
   set_channel_on_method.attachCallback(makeFunctor((Functor0 *)0,*this,&HBridgeController::setChannelOnCallback));
@@ -109,6 +112,23 @@ void HBridgeController::setup()
   add_pwm_method.addParameter(on_duration_parameter);
   add_pwm_method.addParameter(count_parameter);
   add_pwm_method.setReturnTypeLong();
+
+  modular_server::Method & start_pwm_method = modular_server_.createMethod(constants::start_pwm_method_name);
+  start_pwm_method.attachCallback(makeFunctor((Functor0 *)0,*this,&HBridgeController::startPwmCallback));
+  start_pwm_method.addParameter(channels_parameter);
+  start_pwm_method.addParameter(polarity_parameter);
+  start_pwm_method.addParameter(delay_parameter);
+  start_pwm_method.addParameter(period_parameter);
+  start_pwm_method.addParameter(on_duration_parameter);
+  start_pwm_method.setReturnTypeLong();
+
+  modular_server::Method & stop_pwm_method = modular_server_.createMethod(constants::stop_pwm_method_name);
+  stop_pwm_method.attachCallback(makeFunctor((Functor0 *)0,*this,&HBridgeController::stopPwmCallback));
+  stop_pwm_method.addParameter(pwm_index_parameter);
+
+  modular_server::Method & stop_all_pwm_method = modular_server_.createMethod(constants::stop_all_pwm_method_name);
+  stop_all_pwm_method.attachCallback(makeFunctor((Functor0 *)0,*this,&HBridgeController::stopAllPwmCallback));
+
 }
 
 void HBridgeController::setChannelOn(const size_t channel, const constants::Polarity polarity)
@@ -189,7 +209,7 @@ int HBridgeController::addPwm(const uint32_t channels,
 {
   if (indexed_pulses_.full())
   {
-    return -1;
+    return constants::bad_index;
   }
   h_bridge_controller::constants::PulseInfo pulse_info;
   pulse_info.channels = channels;
@@ -202,9 +222,57 @@ int HBridgeController::addPwm(const uint32_t channels,
                                                                 on_duration,
                                                                 count,
                                                                 index);
-  event_controller.addStopCallback(event_id_pair,makeFunctor((Functor1<int> *)0,*this,&HBridgeController::removeIndexedPulseCallback));
+  event_controller.addStopCallback(event_id_pair,makeFunctor((Functor1<int> *)0,*this,&HBridgeController::stopPwmCallback));
+  indexed_pulses_[index].event_id_pair = event_id_pair;
   event_controller.enable(event_id_pair);
   return index;
+}
+
+int HBridgeController::startPwm(const uint32_t channels,
+                                const h_bridge_controller::constants::Polarity polarity,
+                                const long delay,
+                                const long period,
+                                const long on_duration)
+{
+  if (indexed_pulses_.full())
+  {
+    return -1;
+  }
+  h_bridge_controller::constants::PulseInfo pulse_info;
+  pulse_info.channels = channels;
+  pulse_info.polarity = polarity;
+  int index = indexed_pulses_.add(pulse_info);
+  EventIdPair event_id_pair = event_controller.addInfinitePwmUsingDelay(makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOnCallback),
+                                                                        makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOffCallback),
+                                                                        delay,
+                                                                        period,
+                                                                        on_duration,
+                                                                        index);
+  event_controller.addStopCallback(event_id_pair,makeFunctor((Functor1<int> *)0,*this,&HBridgeController::stopPwmCallback));
+  indexed_pulses_[index].event_id_pair = event_id_pair;
+  event_controller.enable(event_id_pair);
+  return index;
+}
+
+void HBridgeController::stopPwm(const int pwm_index)
+{
+  if (pwm_index < 0)
+  {
+    return;
+  }
+  if (indexed_pulses_.indexHasValue(pwm_index))
+  {
+    constants::PulseInfo pulse_info = indexed_pulses_[pwm_index];
+    event_controller.remove(pulse_info.event_id_pair);
+  }
+}
+
+void HBridgeController::stopAllPwm()
+{
+  for (size_t i=0; i<constants::INDEXED_PULSES_COUNT_MAX; ++i)
+  {
+    stopPwm(i);
+  }
 }
 
 uint32_t HBridgeController::arrayToChannels(ArduinoJson::JsonArray & channels_array)
@@ -302,7 +370,45 @@ void HBridgeController::addPwmCallback()
   const uint32_t channels = arrayToChannels(channels_array);
   const constants::Polarity polarity = stringToPolarity(polarity_string);
   int index = addPwm(channels,polarity,delay,period,on_duration,count);
-  modular_server_.writeResultToResponse(index);
+  if (index >= 0)
+  {
+    modular_server_.writeResultToResponse(index);
+  }
+  else
+  {
+    modular_server_.sendErrorResponse(constants::pwm_error);
+  }
+}
+
+void HBridgeController::startPwmCallback()
+{
+  ArduinoJson::JsonArray & channels_array = modular_server_.getParameterValue(constants::channels_parameter_name);
+  const char * polarity_string = modular_server_.getParameterValue(constants::polarity_parameter_name);
+  long delay = modular_server_.getParameterValue(constants::delay_parameter_name);
+  long period = modular_server_.getParameterValue(constants::period_parameter_name);
+  long on_duration = modular_server_.getParameterValue(constants::on_duration_parameter_name);
+  const uint32_t channels = arrayToChannels(channels_array);
+  const constants::Polarity polarity = stringToPolarity(polarity_string);
+  int index = startPwm(channels,polarity,delay,period,on_duration);
+  if (index >= 0)
+  {
+    modular_server_.writeResultToResponse(index);
+  }
+  else
+  {
+    modular_server_.sendErrorResponse(constants::pwm_error);
+  }
+}
+
+void HBridgeController::stopPwmCallback()
+{
+ long pwm_index = modular_server_.getParameterValue(constants::pwm_index_parameter_name);
+ stopPwm(pwm_index);
+}
+
+void HBridgeController::stopAllPwmCallback()
+{
+ stopAllPwm();
 }
 
 void HBridgeController::setChannelsOnCallback(int index)
@@ -318,7 +424,9 @@ void HBridgeController::setChannelsOffCallback(int index)
   setChannelsOff(channels);
 }
 
-void HBridgeController::removeIndexedPulseCallback(int index)
+void HBridgeController::stopPwmCallback(int index)
 {
+  uint32_t & channels = indexed_pulses_[index].channels;
+  setChannelsOff(channels);
   indexed_pulses_.remove(index);
 }

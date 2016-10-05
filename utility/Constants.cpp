@@ -26,6 +26,8 @@ const modular_server::FirmwareInfo firmware_info =
 
 CONSTANT_STRING(hardware_name,"h_bridge_controller");
 
+const int bad_index = -1;
+
 // Units
 CONSTANT_STRING(ms_unit,"ms");
 
@@ -62,6 +64,8 @@ CONSTANT_STRING(count_parameter_name,"count");
 const long count_min = 1;
 const long count_max = 1000000;
 
+CONSTANT_STRING(pwm_index_parameter_name,"pwm_index");
+
 // Methods
 CONSTANT_STRING(set_channel_on_method_name,"setChannelOn");
 CONSTANT_STRING(set_channel_off_method_name,"setChannelOff");
@@ -75,5 +79,6 @@ CONSTANT_STRING(stop_pwm_method_name,"stopPwm");
 CONSTANT_STRING(stop_all_pwm_method_name,"stopAllPwm");
 
 // Errors
+CONSTANT_STRING(pwm_error,"Maximum number of pwm already set, must stop one to add another.");
 }
 }

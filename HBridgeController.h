@@ -46,6 +46,13 @@ public:
              const long period,
              const long on_duration,
              const long count);
+  int startPwm(const uint32_t channels,
+               const h_bridge_controller::constants::Polarity polarity,
+               const long delay,
+               const long period,
+               const long on_duration);
+  void stopPwm(const int pwm_index);
+  void stopAllPwm();
   uint32_t arrayToChannels(ArduinoJson::JsonArray & channels_array);
   h_bridge_controller::constants::Polarity stringToPolarity(const char * string);
 
@@ -65,9 +72,12 @@ private:
   void setAllChannelsOnCallback();
   void setAllChannelsOffCallback();
   void addPwmCallback();
+  void startPwmCallback();
+  void stopPwmCallback();
+  void stopAllPwmCallback();
   void setChannelsOnCallback(int index);
   void setChannelsOffCallback(int index);
-  void removeIndexedPulseCallback(int index);
+  void stopPwmCallback(int index);
 
 };
 
