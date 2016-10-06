@@ -20,8 +20,9 @@
 #include "SavedVariable.h"
 #include "Functor.h"
 
-#include "EventController.h"
 #include "IndexedContainer.h"
+#include "FunctorCallbacks.h"
+#include "EventController.h"
 
 #include "ModularServer.h"
 #include "ModularDevice.h"
@@ -60,6 +61,8 @@ private:
   modular_server::Field fields_[h_bridge_controller::constants::FIELD_COUNT_MAX];
   modular_server::Parameter parameters_[h_bridge_controller::constants::PARAMETER_COUNT_MAX];
   modular_server::Method methods_[h_bridge_controller::constants::METHOD_COUNT_MAX];
+
+  EventController<h_bridge_controller::constants::INDEXED_PULSES_COUNT_MAX*2> event_controller_;
 
   IndexedContainer<h_bridge_controller::constants::PulseInfo,
                    h_bridge_controller::constants::INDEXED_PULSES_COUNT_MAX> indexed_pulses_;

@@ -20,7 +20,7 @@ void HBridgeController::setup()
   ModularDevice::setup();
 
   // Event Controller Setup
-  event_controller.setup();
+  event_controller_.setup();
 
   // Pin Setup
   for (int channel=0; channel<constants::CHANNEL_COUNT; ++channel)
@@ -226,16 +226,16 @@ int HBridgeController::addPwm(const uint32_t channels,
   pulse_info.channels = channels;
   pulse_info.polarity = polarity;
   int index = indexed_pulses_.add(pulse_info);
-  EventIdPair event_id_pair = event_controller.addPwmUsingDelay(makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOnCallback),
-                                                                makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOffCallback),
-                                                                delay,
-                                                                period,
-                                                                on_duration,
-                                                                count,
-                                                                index);
-  event_controller.addStopCallback(event_id_pair,makeFunctor((Functor1<int> *)0,*this,&HBridgeController::stopPwmCallback));
+  EventIdPair event_id_pair = event_controller_.addPwmUsingDelay(makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOnCallback),
+                                                                 makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOffCallback),
+                                                                 delay,
+                                                                 period,
+                                                                 on_duration,
+                                                                 count,
+                                                                 index);
+  event_controller_.addStopCallback(event_id_pair,makeFunctor((Functor1<int> *)0,*this,&HBridgeController::stopPwmCallback));
   indexed_pulses_[index].event_id_pair = event_id_pair;
-  event_controller.enable(event_id_pair);
+  event_controller_.enable(event_id_pair);
   return index;
 }
 
@@ -253,15 +253,15 @@ int HBridgeController::startPwm(const uint32_t channels,
   pulse_info.channels = channels;
   pulse_info.polarity = polarity;
   int index = indexed_pulses_.add(pulse_info);
-  EventIdPair event_id_pair = event_controller.addInfinitePwmUsingDelay(makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOnCallback),
-                                                                        makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOffCallback),
-                                                                        delay,
-                                                                        period,
-                                                                        on_duration,
-                                                                        index);
-  event_controller.addStopCallback(event_id_pair,makeFunctor((Functor1<int> *)0,*this,&HBridgeController::stopPwmCallback));
+  EventIdPair event_id_pair = event_controller_.addInfinitePwmUsingDelay(makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOnCallback),
+                                                                         makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOffCallback),
+                                                                         delay,
+                                                                         period,
+                                                                         on_duration,
+                                                                         index);
+  event_controller_.addStopCallback(event_id_pair,makeFunctor((Functor1<int> *)0,*this,&HBridgeController::stopPwmCallback));
   indexed_pulses_[index].event_id_pair = event_id_pair;
-  event_controller.enable(event_id_pair);
+  event_controller_.enable(event_id_pair);
   return index;
 }
 
@@ -274,7 +274,7 @@ void HBridgeController::stopPwm(const int pwm_index)
   if (indexed_pulses_.indexHasValue(pwm_index))
   {
     constants::PulseInfo pulse_info = indexed_pulses_[pwm_index];
-    event_controller.remove(pulse_info.event_id_pair);
+    event_controller_.remove(pulse_info.event_id_pair);
   }
 }
 
@@ -413,13 +413,13 @@ void HBridgeController::startPwmCallback()
 
 void HBridgeController::stopPwmCallback()
 {
- long pwm_index = modular_server_.getParameterValue(constants::pwm_index_parameter_name);
- stopPwm(pwm_index);
+  long pwm_index = modular_server_.getParameterValue(constants::pwm_index_parameter_name);
+  stopPwm(pwm_index);
 }
 
 void HBridgeController::stopAllPwmCallback()
 {
- stopAllPwm();
+  stopAllPwm();
 }
 
 void HBridgeController::setChannelsOnCallback(int index)

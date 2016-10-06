@@ -11,8 +11,9 @@
 #include "SavedVariable.h"
 #include "Functor.h"
 
-#include "EventController.h"
 #include "IndexedContainer.h"
+#include "FunctorCallbacks.h"
+#include "EventController.h"
 
 #include "ModularServer.h"
 #include "ModularDevice.h"
