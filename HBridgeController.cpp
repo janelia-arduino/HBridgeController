@@ -233,6 +233,7 @@ int HBridgeController::addPwm(const uint32_t channels,
                                                                  on_duration,
                                                                  count,
                                                                  index);
+  event_controller_.addStartCallback(event_id_pair,makeFunctor((Functor1<int> *)0,*this,&HBridgeController::startPwmCallback));
   event_controller_.addStopCallback(event_id_pair,makeFunctor((Functor1<int> *)0,*this,&HBridgeController::stopPwmCallback));
   indexed_pulses_[index].event_id_pair = event_id_pair;
   event_controller_.enable(event_id_pair);
@@ -259,6 +260,7 @@ int HBridgeController::startPwm(const uint32_t channels,
                                                                          period,
                                                                          on_duration,
                                                                          index);
+  event_controller_.addStartCallback(event_id_pair,makeFunctor((Functor1<int> *)0,*this,&HBridgeController::startPwmCallback));
   event_controller_.addStopCallback(event_id_pair,makeFunctor((Functor1<int> *)0,*this,&HBridgeController::stopPwmCallback));
   indexed_pulses_[index].event_id_pair = event_id_pair;
   event_controller_.enable(event_id_pair);
@@ -328,6 +330,18 @@ constants::Polarity HBridgeController:: stringToPolarity(const char * string)
 // modular_server_.setFieldValue type must match the field default type
 // modular_server_.getFieldElementValue type must match the field array element default type
 // modular_server_.setFieldElementValue type must match the field array element default type
+
+void HBridgeController::startPwmCallback(int index)
+{
+}
+
+void HBridgeController::stopPwmCallback(int index)
+{
+  uint32_t & channels = indexed_pulses_[index].channels;
+  setChannelsOff(channels);
+  indexed_pulses_.remove(index);
+}
+
 void HBridgeController::setChannelOnCallback()
 {
   long channel = modular_server_.getParameterValue(constants::channel_parameter_name);
@@ -433,11 +447,4 @@ void HBridgeController::setChannelsOffCallback(int index)
 {
   uint32_t & channels = indexed_pulses_[index].channels;
   setChannelsOff(channels);
-}
-
-void HBridgeController::stopPwmCallback(int index)
-{
-  uint32_t & channels = indexed_pulses_[index].channels;
-  setChannelsOff(channels);
-  indexed_pulses_.remove(index);
 }

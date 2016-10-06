@@ -57,6 +57,10 @@ public:
   uint32_t arrayToChannels(ArduinoJson::JsonArray & channels_array);
   h_bridge_controller::constants::Polarity stringToPolarity(const char * string);
 
+  // Callbacks
+  virtual void startPwmCallback(int index);
+  virtual void stopPwmCallback(int index);
+
 private:
   modular_server::Field fields_[h_bridge_controller::constants::FIELD_COUNT_MAX];
   modular_server::Parameter parameters_[h_bridge_controller::constants::PARAMETER_COUNT_MAX];
@@ -80,7 +84,6 @@ private:
   void stopAllPwmCallback();
   void setChannelsOnCallback(int index);
   void setChannelsOffCallback(int index);
-  void stopPwmCallback(int index);
 
 };
 
