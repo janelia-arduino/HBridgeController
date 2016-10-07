@@ -34,15 +34,14 @@ void HBridgeController::setup()
   // Set Device ID
   modular_server_.setDeviceName(constants::device_name);
 
-  // Add Device Info
-  modular_server_.addFirmwareInfo(constants::firmware_info);
+  // Add Hardware Info
   modular_server_.addHardwareInfo(constants::hardware_info);
 
-  // Add Storage
-  modular_server_.addFieldStorage(fields_);
-  modular_server_.addParameterStorage(parameters_);
-  modular_server_.addMethodStorage(methods_);
-
+  // Add Firmware
+  modular_server_.addFirmware(constants::firmware_info,
+                              fields_,
+                              parameters_,
+                              methods_);
   // Fields
   modular_server::Field & polarity_reversed_field = modular_server_.createField(constants::polarity_reversed_field_name,constants::polarity_reversed_default);
 
