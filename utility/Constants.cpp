@@ -77,6 +77,8 @@ CONSTANT_STRING(set_all_channels_on_method_name,"setAllChannelsOn");
 CONSTANT_STRING(set_all_channels_off_method_name,"setAllChannelsOff");
 CONSTANT_STRING(add_pwm_method_name,"addPwm");
 CONSTANT_STRING(start_pwm_method_name,"startPwm");
+CONSTANT_STRING(add_toggle_pwm_method_name,"addTogglePwm");
+CONSTANT_STRING(start_toggle_pwm_method_name,"startTogglePwm");
 CONSTANT_STRING(stop_pwm_method_name,"stopPwm");
 CONSTANT_STRING(stop_all_pwm_method_name,"stopAllPwm");
 

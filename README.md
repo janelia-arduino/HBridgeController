@@ -10,6 +10,45 @@ License:
 
 [Examples](./examples)
 
+##API
+
+```json
+{
+  "id":"getApi",
+  "result":{
+    "firmware":["HBridgeController"],
+    "methods":[
+      "setChannelOn",
+      "setChannelOff",
+      "setChannelsOn",
+      "setChannelsOff",
+      "setAllChannelsOn",
+      "setAllChannelsOff",
+      "addPwm",
+      "startPwm",
+      "addTogglePwm",
+      "startTogglePwm",
+      "stopPwm",
+      "stopAllPwm"
+    ],
+    "parameters":[
+      "channel",
+      "channels",
+      "polarity",
+      "delay",
+      "period",
+      "on_duration",
+      "count",
+      "pwm_index"
+    ],
+    "fields":[
+      "polarity_reversed",
+      "channels_enabled"
+    ]
+  }
+}
+```
+
 ##More Detailed Modular Device Information
 
 [modular-devices](https://github.com/janelia-modular-devices/modular-devices)

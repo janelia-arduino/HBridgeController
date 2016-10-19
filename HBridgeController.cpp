@@ -124,6 +124,25 @@ void HBridgeController::setup()
   start_pwm_method.addParameter(on_duration_parameter);
   start_pwm_method.setReturnTypeLong();
 
+  modular_server::Method & add_toggle_pwm_method = modular_server_.createMethod(constants::add_toggle_pwm_method_name);
+  add_toggle_pwm_method.attachCallback(makeFunctor((Functor0 *)0,*this,&HBridgeController::addTogglePwmCallback));
+  add_toggle_pwm_method.addParameter(channels_parameter);
+  add_toggle_pwm_method.addParameter(polarity_parameter);
+  add_toggle_pwm_method.addParameter(delay_parameter);
+  add_toggle_pwm_method.addParameter(period_parameter);
+  add_toggle_pwm_method.addParameter(on_duration_parameter);
+  add_toggle_pwm_method.addParameter(count_parameter);
+  add_toggle_pwm_method.setReturnTypeLong();
+
+  modular_server::Method & start_toggle_pwm_method = modular_server_.createMethod(constants::start_toggle_pwm_method_name);
+  start_toggle_pwm_method.attachCallback(makeFunctor((Functor0 *)0,*this,&HBridgeController::startTogglePwmCallback));
+  start_toggle_pwm_method.addParameter(channels_parameter);
+  start_toggle_pwm_method.addParameter(polarity_parameter);
+  start_toggle_pwm_method.addParameter(delay_parameter);
+  start_toggle_pwm_method.addParameter(period_parameter);
+  start_toggle_pwm_method.addParameter(on_duration_parameter);
+  start_toggle_pwm_method.setReturnTypeLong();
+
   modular_server::Method & stop_pwm_method = modular_server_.createMethod(constants::stop_pwm_method_name);
   stop_pwm_method.attachCallback(makeFunctor((Functor0 *)0,*this,&HBridgeController::stopPwmCallback));
   stop_pwm_method.addParameter(pwm_index_parameter);
@@ -136,17 +155,15 @@ void HBridgeController::setup()
 void HBridgeController::setChannelOn(const size_t channel, const constants::Polarity polarity)
 {
   bool channel_enabled;
-  modular_server_.getFieldElementValue(constants::channels_enabled_field_name,
-                                       channel,
-                                       channel_enabled);
+  modular_server_.field(constants::channels_enabled_field_name).getElementValue(channel,
+                                                                                channel_enabled);
   if (!channel_enabled)
   {
     return;
   }
   bool channel_polarity_reversed;
-  modular_server_.getFieldElementValue(constants::polarity_reversed_field_name,
-                                       channel,
-                                       channel_polarity_reversed);
+  modular_server_.field(constants::polarity_reversed_field_name).getElementValue(channel,
+                                                                                 channel_polarity_reversed);
   constants::Polarity polarity_corrected = polarity;
   if (channel_polarity_reversed)
   {
@@ -266,6 +283,62 @@ int HBridgeController::startPwm(const uint32_t channels,
   return index;
 }
 
+int HBridgeController::addTogglePwm(const uint32_t channels,
+                                    const h_bridge_controller::constants::Polarity polarity,
+                                    const long delay,
+                                    const long period,
+                                    const long on_duration,
+                                    const long count)
+{
+  if (indexed_pulses_.full())
+  {
+    return constants::bad_index;
+  }
+  h_bridge_controller::constants::PulseInfo pulse_info;
+  pulse_info.channels = channels;
+  pulse_info.polarity = polarity;
+  int index = indexed_pulses_.add(pulse_info);
+  EventIdPair event_id_pair = event_controller_.addPwmUsingDelay(makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOnCallback),
+                                                                 makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOnReversedCallback),
+                                                                 delay,
+                                                                 period,
+                                                                 on_duration,
+                                                                 count,
+                                                                 index);
+  event_controller_.addStartCallback(event_id_pair,makeFunctor((Functor1<int> *)0,*this,&HBridgeController::startPwmCallback));
+  event_controller_.addStopCallback(event_id_pair,makeFunctor((Functor1<int> *)0,*this,&HBridgeController::stopPwmCallback));
+  indexed_pulses_[index].event_id_pair = event_id_pair;
+  event_controller_.enable(event_id_pair);
+  return index;
+}
+
+int HBridgeController::startTogglePwm(const uint32_t channels,
+                                      const h_bridge_controller::constants::Polarity polarity,
+                                      const long delay,
+                                      const long period,
+                                      const long on_duration)
+{
+  if (indexed_pulses_.full())
+  {
+    return -1;
+  }
+  h_bridge_controller::constants::PulseInfo pulse_info;
+  pulse_info.channels = channels;
+  pulse_info.polarity = polarity;
+  int index = indexed_pulses_.add(pulse_info);
+  EventIdPair event_id_pair = event_controller_.addInfinitePwmUsingDelay(makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOnCallback),
+                                                                         makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOnReversedCallback),
+                                                                         delay,
+                                                                         period,
+                                                                         on_duration,
+                                                                         index);
+  event_controller_.addStartCallback(event_id_pair,makeFunctor((Functor1<int> *)0,*this,&HBridgeController::startPwmCallback));
+  event_controller_.addStopCallback(event_id_pair,makeFunctor((Functor1<int> *)0,*this,&HBridgeController::stopPwmCallback));
+  indexed_pulses_[index].event_id_pair = event_id_pair;
+  event_controller_.enable(event_id_pair);
+  return index;
+}
+
 void HBridgeController::stopPwm(const int pwm_index)
 {
   if (pwm_index < 0)
@@ -315,20 +388,20 @@ constants::Polarity HBridgeController:: stringToPolarity(const char * string)
 
 // Callbacks must be non-blocking (avoid 'delay')
 //
-// modular_server_.getParameterValue must be cast to either:
-// const char *
-// long
-// double
+// modular_server_.parameter(parameter_name).getValue(value) value type must be either:
+// fixed-point number (int, long, etc.)
+// floating-point number (float, double)
 // bool
-// ArduinoJson::JsonArray &
-// ArduinoJson::JsonObject &
+// const char *
+// ArduinoJson::JsonArray *
+// ArduinoJson::JsonObject *
 //
 // For more info read about ArduinoJson parsing https://github.com/janelia-arduino/ArduinoJson
 //
-// modular_server_.getFieldValue type must match the field default type
-// modular_server_.setFieldValue type must match the field default type
-// modular_server_.getFieldElementValue type must match the field array element default type
-// modular_server_.setFieldElementValue type must match the field array element default type
+// modular_server_.field(field_name).getValue(value) value type must match the field default type
+// modular_server_.field(field_name).setValue(value) value type must match the field default type
+// modular_server_.field(field_name).getElementValue(value) value type must match the field array element default type
+// modular_server_.field(field_name).setElementValue(value) value type must match the field array element default type
 
 void HBridgeController::startPwmCallback(int index)
 {
@@ -343,37 +416,44 @@ void HBridgeController::stopPwmCallback(int index)
 
 void HBridgeController::setChannelOnCallback()
 {
-  long channel = modular_server_.getParameterValue(constants::channel_parameter_name);
-  const char * polarity_string = modular_server_.getParameterValue(constants::polarity_parameter_name);
+  int channel;
+  modular_server_.parameter(constants::channel_parameter_name).getValue(channel);
+  const char * polarity_string;
+  modular_server_.parameter(constants::polarity_parameter_name).getValue(polarity_string);
   const constants::Polarity polarity = stringToPolarity(polarity_string);
   setChannelOn(channel,polarity);
 }
 
 void HBridgeController::setChannelOffCallback()
 {
-  long channel = modular_server_.getParameterValue(constants::channel_parameter_name);
+  int channel;
+  modular_server_.parameter(constants::channel_parameter_name).getValue(channel);
   setChannelOff(channel);
 }
 
 void HBridgeController::setChannelsOnCallback()
 {
-  ArduinoJson::JsonArray & channels_array = modular_server_.getParameterValue(constants::channels_parameter_name);
-  const char * polarity_string = modular_server_.getParameterValue(constants::polarity_parameter_name);
-  const uint32_t channels = arrayToChannels(channels_array);
+  ArduinoJson::JsonArray * channels_array_ptr;
+  modular_server_.parameter(constants::channels_parameter_name).getValue(channels_array_ptr);
+  const char * polarity_string;
+  modular_server_.parameter(constants::polarity_parameter_name).getValue(polarity_string);
+  const uint32_t channels = arrayToChannels(*channels_array_ptr);
   const constants::Polarity polarity = stringToPolarity(polarity_string);
   setChannelsOn(channels,polarity);
 }
 
 void HBridgeController::setChannelsOffCallback()
 {
-  ArduinoJson::JsonArray & channels_array = modular_server_.getParameterValue(constants::channels_parameter_name);
-  const uint32_t channels = arrayToChannels(channels_array);
+  ArduinoJson::JsonArray * channels_array_ptr;
+  modular_server_.parameter(constants::channels_parameter_name).getValue(channels_array_ptr);
+  const uint32_t channels = arrayToChannels(*channels_array_ptr);
   setChannelsOff(channels);
 }
 
 void HBridgeController::setAllChannelsOnCallback()
 {
-  const char * polarity_string = modular_server_.getParameterValue(constants::polarity_parameter_name);
+  const char * polarity_string;
+  modular_server_.parameter(constants::polarity_parameter_name).getValue(polarity_string);
   const constants::Polarity polarity = stringToPolarity(polarity_string);
   setAllChannelsOn(polarity);
 }
@@ -385,48 +465,112 @@ void HBridgeController::setAllChannelsOffCallback()
 
 void HBridgeController::addPwmCallback()
 {
-  ArduinoJson::JsonArray & channels_array = modular_server_.getParameterValue(constants::channels_parameter_name);
-  const char * polarity_string = modular_server_.getParameterValue(constants::polarity_parameter_name);
-  long delay = modular_server_.getParameterValue(constants::delay_parameter_name);
-  long period = modular_server_.getParameterValue(constants::period_parameter_name);
-  long on_duration = modular_server_.getParameterValue(constants::on_duration_parameter_name);
-  long count = modular_server_.getParameterValue(constants::count_parameter_name);
-  const uint32_t channels = arrayToChannels(channels_array);
+  ArduinoJson::JsonArray * channels_array_ptr;
+  modular_server_.parameter(constants::channels_parameter_name).getValue(channels_array_ptr);
+  const char * polarity_string;
+  modular_server_.parameter(constants::polarity_parameter_name).getValue(polarity_string);
+  long delay;
+  modular_server_.parameter(constants::delay_parameter_name).getValue(delay);
+  long period;
+  modular_server_.parameter(constants::period_parameter_name).getValue(period);
+  long on_duration;
+  modular_server_.parameter(constants::on_duration_parameter_name).getValue(on_duration);
+  long count;
+  modular_server_.parameter(constants::count_parameter_name).getValue(count);
+  const uint32_t channels = arrayToChannels(*channels_array_ptr);
   const constants::Polarity polarity = stringToPolarity(polarity_string);
   int index = addPwm(channels,polarity,delay,period,on_duration,count);
   if (index >= 0)
   {
-    modular_server_.writeResultToResponse(index);
+    modular_server_.response().returnResult(index);
   }
   else
   {
-    modular_server_.sendErrorResponse(constants::pwm_error);
+    modular_server_.response().returnError(constants::pwm_error);
   }
 }
 
 void HBridgeController::startPwmCallback()
 {
-  ArduinoJson::JsonArray & channels_array = modular_server_.getParameterValue(constants::channels_parameter_name);
-  const char * polarity_string = modular_server_.getParameterValue(constants::polarity_parameter_name);
-  long delay = modular_server_.getParameterValue(constants::delay_parameter_name);
-  long period = modular_server_.getParameterValue(constants::period_parameter_name);
-  long on_duration = modular_server_.getParameterValue(constants::on_duration_parameter_name);
-  const uint32_t channels = arrayToChannels(channels_array);
+  ArduinoJson::JsonArray * channels_array_ptr;
+  modular_server_.parameter(constants::channels_parameter_name).getValue(channels_array_ptr);
+  const char * polarity_string;
+  modular_server_.parameter(constants::polarity_parameter_name).getValue(polarity_string);
+  long delay;
+  modular_server_.parameter(constants::delay_parameter_name).getValue(delay);
+  long period;
+  modular_server_.parameter(constants::period_parameter_name).getValue(period);
+  long on_duration;
+  modular_server_.parameter(constants::on_duration_parameter_name).getValue(on_duration);
+  const uint32_t channels = arrayToChannels(*channels_array_ptr);
   const constants::Polarity polarity = stringToPolarity(polarity_string);
   int index = startPwm(channels,polarity,delay,period,on_duration);
   if (index >= 0)
   {
-    modular_server_.writeResultToResponse(index);
+    modular_server_.response().returnResult(index);
   }
   else
   {
-    modular_server_.sendErrorResponse(constants::pwm_error);
+    modular_server_.response().returnError(constants::pwm_error);
+  }
+}
+
+void HBridgeController::addTogglePwmCallback()
+{
+  ArduinoJson::JsonArray * channels_array_ptr;
+  modular_server_.parameter(constants::channels_parameter_name).getValue(channels_array_ptr);
+  const char * polarity_string;
+  modular_server_.parameter(constants::polarity_parameter_name).getValue(polarity_string);
+  long delay;
+  modular_server_.parameter(constants::delay_parameter_name).getValue(delay);
+  long period;
+  modular_server_.parameter(constants::period_parameter_name).getValue(period);
+  long on_duration;
+  modular_server_.parameter(constants::on_duration_parameter_name).getValue(on_duration);
+  long count;
+  modular_server_.parameter(constants::count_parameter_name).getValue(count);
+  const uint32_t channels = arrayToChannels(*channels_array_ptr);
+  const constants::Polarity polarity = stringToPolarity(polarity_string);
+  int index = addTogglePwm(channels,polarity,delay,period,on_duration,count);
+  if (index >= 0)
+  {
+    modular_server_.response().returnResult(index);
+  }
+  else
+  {
+    modular_server_.response().returnError(constants::pwm_error);
+  }
+}
+
+void HBridgeController::startTogglePwmCallback()
+{
+  ArduinoJson::JsonArray * channels_array_ptr;
+  modular_server_.parameter(constants::channels_parameter_name).getValue(channels_array_ptr);
+  const char * polarity_string;
+  modular_server_.parameter(constants::polarity_parameter_name).getValue(polarity_string);
+  long delay;
+  modular_server_.parameter(constants::delay_parameter_name).getValue(delay);
+  long period;
+  modular_server_.parameter(constants::period_parameter_name).getValue(period);
+  long on_duration;
+  modular_server_.parameter(constants::on_duration_parameter_name).getValue(on_duration);
+  const uint32_t channels = arrayToChannels(*channels_array_ptr);
+  const constants::Polarity polarity = stringToPolarity(polarity_string);
+  int index = startTogglePwm(channels,polarity,delay,period,on_duration);
+  if (index >= 0)
+  {
+    modular_server_.response().returnResult(index);
+  }
+  else
+  {
+    modular_server_.response().returnError(constants::pwm_error);
   }
 }
 
 void HBridgeController::stopPwmCallback()
 {
-  long pwm_index = modular_server_.getParameterValue(constants::pwm_index_parameter_name);
+  int pwm_index;
+  modular_server_.parameter(constants::pwm_index_parameter_name).getValue(pwm_index);
   stopPwm(pwm_index);
 }
 
@@ -446,4 +590,13 @@ void HBridgeController::setChannelsOffCallback(int index)
 {
   uint32_t & channels = indexed_pulses_[index].channels;
   setChannelsOff(channels);
+}
+
+void HBridgeController::setChannelsOnReversedCallback(int index)
+{
+  uint32_t & channels = indexed_pulses_[index].channels;
+  constants::Polarity & polarity = indexed_pulses_[index].polarity;
+  constants::Polarity polarity_reversed;
+  polarity_reversed = ((polarity == constants::POSITIVE) ? constants::NEGATIVE : constants::POSITIVE);
+  setChannelsOn(channels,polarity_reversed);
 }

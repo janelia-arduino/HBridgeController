@@ -52,6 +52,17 @@ public:
                const long delay,
                const long period,
                const long on_duration);
+  int addTogglePwm(const uint32_t channels,
+                   const h_bridge_controller::constants::Polarity polarity,
+                   const long delay,
+                   const long period,
+                   const long on_duration,
+                   const long count);
+  int startTogglePwm(const uint32_t channels,
+                     const h_bridge_controller::constants::Polarity polarity,
+                     const long delay,
+                     const long period,
+                     const long on_duration);
   void stopPwm(const int pwm_index);
   void stopAllPwm();
   uint32_t arrayToChannels(ArduinoJson::JsonArray & channels_array);
@@ -66,7 +77,7 @@ private:
   modular_server::Parameter parameters_[h_bridge_controller::constants::PARAMETER_COUNT_MAX];
   modular_server::Method methods_[h_bridge_controller::constants::METHOD_COUNT_MAX];
 
-  EventController<h_bridge_controller::constants::INDEXED_PULSES_COUNT_MAX*2> event_controller_;
+  EventController<h_bridge_controller::constants::EVENT_COUNT_MAX> event_controller_;
 
   IndexedContainer<h_bridge_controller::constants::PulseInfo,
                    h_bridge_controller::constants::INDEXED_PULSES_COUNT_MAX> indexed_pulses_;
@@ -80,10 +91,13 @@ private:
   void setAllChannelsOffCallback();
   void addPwmCallback();
   void startPwmCallback();
+  void addTogglePwmCallback();
+  void startTogglePwmCallback();
   void stopPwmCallback();
   void stopAllPwmCallback();
   void setChannelsOnCallback(int index);
   void setChannelsOffCallback(int index);
+  void setChannelsOnReversedCallback(int index);
 
 };
 

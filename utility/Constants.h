@@ -20,7 +20,7 @@ namespace constants
 //MAX values must be >= 1, >= created/copied count, < RAM limit
 enum{FIELD_COUNT_MAX=2};
 enum{PARAMETER_COUNT_MAX=8};
-enum{METHOD_COUNT_MAX=10};
+enum{METHOD_COUNT_MAX=12};
 
 extern ConstantString device_name;
 
@@ -36,6 +36,7 @@ enum Polarity
     NEGATIVE=-1
   };
 
+enum{EVENT_COUNT_MAX=8};
 enum{INDEXED_PULSES_COUNT_MAX=4};
 extern const int bad_index;
 
@@ -93,6 +94,8 @@ extern ConstantString set_all_channels_on_method_name;
 extern ConstantString set_all_channels_off_method_name;
 extern ConstantString add_pwm_method_name;
 extern ConstantString start_pwm_method_name;
+extern ConstantString add_toggle_pwm_method_name;
+extern ConstantString start_toggle_pwm_method_name;
 extern ConstantString stop_pwm_method_name;
 extern ConstantString stop_all_pwm_method_name;
 
