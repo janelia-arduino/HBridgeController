@@ -76,6 +76,7 @@ private:
   modular_server::Field fields_[h_bridge_controller::constants::FIELD_COUNT_MAX];
   modular_server::Parameter parameters_[h_bridge_controller::constants::PARAMETER_COUNT_MAX];
   modular_server::Method methods_[h_bridge_controller::constants::METHOD_COUNT_MAX];
+  modular_server::Interrupt interrupts_[modular_device::constants::INTERRUPT_COUNT_MAX];
 
   EventController<h_bridge_controller::constants::EVENT_COUNT_MAX> event_controller_;
 

@@ -38,6 +38,8 @@ const bool channels_enabled_default[CHANNEL_COUNT] = {true,true};
 
 // Methods
 
+// Interrupts
+
 // Errors
 }
 }

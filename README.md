@@ -44,7 +44,8 @@ License:
     "fields":[
       "polarity_reversed",
       "channels_enabled"
-    ]
+    ],
+    "interrupts":[]
   }
 }
 ```

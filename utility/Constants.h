@@ -21,6 +21,7 @@ namespace constants
 enum{FIELD_COUNT_MAX=2};
 enum{PARAMETER_COUNT_MAX=8};
 enum{METHOD_COUNT_MAX=12};
+enum{INTERRUPT_COUNT_MAX=1};
 
 extern ConstantString device_name;
 
@@ -92,6 +93,8 @@ extern ConstantString add_toggle_pwm_method_name;
 extern ConstantString start_toggle_pwm_method_name;
 extern ConstantString stop_pwm_method_name;
 extern ConstantString stop_all_pwm_method_name;
+
+// Interrupts
 
 // Errors
 extern ConstantString pwm_error;

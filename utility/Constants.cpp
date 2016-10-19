@@ -82,6 +82,8 @@ CONSTANT_STRING(start_toggle_pwm_method_name,"startTogglePwm");
 CONSTANT_STRING(stop_pwm_method_name,"stopPwm");
 CONSTANT_STRING(stop_all_pwm_method_name,"stopAllPwm");
 
+// Interrupts
+
 // Errors
 CONSTANT_STRING(pwm_error,"Maximum number of pwm already set, must stop one to add another.");
 }

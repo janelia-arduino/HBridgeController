@@ -41,7 +41,8 @@ void HBridgeController::setup()
   modular_server_.addFirmware(constants::firmware_info,
                               fields_,
                               parameters_,
-                              methods_);
+                              methods_,
+                              interrupts_);
   // Fields
   modular_server::Field & polarity_reversed_field = modular_server_.createField(constants::polarity_reversed_field_name,constants::polarity_reversed_default);
 
@@ -149,6 +150,8 @@ void HBridgeController::setup()
 
   modular_server::Method & stop_all_pwm_method = modular_server_.createMethod(constants::stop_all_pwm_method_name);
   stop_all_pwm_method.attachCallback(makeFunctor((Functor0 *)0,*this,&HBridgeController::stopAllPwmCallback));
+
+  // Interrupts
 
 }
 
