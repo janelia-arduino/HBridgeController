@@ -30,12 +30,6 @@ extern const modular_server::FirmwareInfo firmware_info;
 extern ConstantString hardware_name;
 extern const modular_server::HardwareInfo hardware_info;
 
-enum Polarity
-  {
-    POSITIVE=1,
-    NEGATIVE=-1
-  };
-
 enum{EVENT_COUNT_MAX=8};
 enum{INDEXED_PULSES_COUNT_MAX=4};
 extern const int bad_index;
@@ -43,7 +37,7 @@ extern const int bad_index;
 struct PulseInfo
 {
   uint32_t channels;
-  Polarity polarity;
+  ConstantString * polarity_ptr;
   EventIdPair event_id_pair;
 };
 

@@ -35,38 +35,38 @@ class HBridgeController : public ModularDevice
 public:
   HBridgeController();
   virtual void setup();
-  void setChannelOn(const size_t channel, const h_bridge_controller::constants::Polarity polarity);
+  void setChannelOn(const size_t channel, const ConstantString * const polarity_ptr);
   void setChannelOff(const size_t channel);
-  void setChannelsOn(const uint32_t channels, const h_bridge_controller::constants::Polarity polarity);
+  void setChannelsOn(const uint32_t channels, const ConstantString * const polarity_ptr);
   void setChannelsOff(const uint32_t channels);
-  void setAllChannelsOn(const h_bridge_controller::constants::Polarity polarity);
+  void setAllChannelsOn(const ConstantString * const polarity_ptr);
   void setAllChannelsOff();
   int addPwm(const uint32_t channels,
-             const h_bridge_controller::constants::Polarity polarity,
+             const ConstantString * const polarity_ptr,
              const long delay,
              const long period,
              const long on_duration,
              const long count);
   int startPwm(const uint32_t channels,
-               const h_bridge_controller::constants::Polarity polarity,
+               const ConstantString * const polarity_ptr,
                const long delay,
                const long period,
                const long on_duration);
   int addTogglePwm(const uint32_t channels,
-                   const h_bridge_controller::constants::Polarity polarity,
+                   const ConstantString * const polarity_ptr,
                    const long delay,
                    const long period,
                    const long on_duration,
                    const long count);
   int startTogglePwm(const uint32_t channels,
-                     const h_bridge_controller::constants::Polarity polarity,
+                     const ConstantString * const polarity_ptr,
                      const long delay,
                      const long period,
                      const long on_duration);
   void stopPwm(const int pwm_index);
   void stopAllPwm();
   uint32_t arrayToChannels(ArduinoJson::JsonArray & channels_array);
-  h_bridge_controller::constants::Polarity stringToPolarity(const char * string);
+  ConstantString * const stringToPolarityPtr(const char * string);
 
   // Callbacks
   virtual void startPwmCallback(int index);

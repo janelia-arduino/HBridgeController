@@ -152,7 +152,7 @@ void HBridgeController::setup()
 
 }
 
-void HBridgeController::setChannelOn(const size_t channel, const constants::Polarity polarity)
+void HBridgeController::setChannelOn(const size_t channel, const ConstantString * const polarity_ptr)
 {
   bool channel_enabled;
   modular_server_.field(constants::channels_enabled_field_name).getElementValue(channel,
@@ -164,12 +164,12 @@ void HBridgeController::setChannelOn(const size_t channel, const constants::Pola
   bool channel_polarity_reversed;
   modular_server_.field(constants::polarity_reversed_field_name).getElementValue(channel,
                                                                                  channel_polarity_reversed);
-  constants::Polarity polarity_corrected = polarity;
+  const ConstantString * polarity_corrected_ptr = polarity_ptr;
   if (channel_polarity_reversed)
   {
-    polarity_corrected = ((polarity == constants::POSITIVE) ? constants::NEGATIVE : constants::POSITIVE);
+    polarity_corrected_ptr = ((polarity_ptr == &constants::polarity_positive) ? &constants::polarity_negative : &constants::polarity_positive);
   }
-  if (polarity_corrected == constants::POSITIVE)
+  if (polarity_corrected_ptr == &constants::polarity_positive)
   {
     digitalWrite(constants::dir_a_pins[channel],HIGH);
     digitalWrite(constants::dir_b_pins[channel],LOW);
@@ -187,14 +187,14 @@ void HBridgeController::setChannelOff(const size_t channel)
   digitalWrite(constants::enable_pins[channel],LOW);
 }
 
-void HBridgeController::setChannelsOn(const uint32_t channels, const constants::Polarity polarity)
+void HBridgeController::setChannelsOn(const uint32_t channels, const ConstantString * const polarity_ptr)
 {
   uint32_t bit = 1;
   for (int channel=0; channel<constants::CHANNEL_COUNT; ++channel)
   {
     if (channels & (bit << channel))
     {
-      setChannelOn(channel,polarity);
+      setChannelOn(channel,polarity_ptr);
     }
   }
 }
@@ -211,11 +211,11 @@ void HBridgeController::setChannelsOff(const uint32_t channels)
   }
 }
 
-void HBridgeController::setAllChannelsOn(const constants::Polarity polarity)
+void HBridgeController::setAllChannelsOn(const ConstantString * const polarity_ptr)
 {
   for (int channel=0; channel<constants::CHANNEL_COUNT; ++channel)
   {
-    setChannelOn(channel,polarity);
+    setChannelOn(channel,polarity_ptr);
   }
 }
 
@@ -228,7 +228,7 @@ void HBridgeController::setAllChannelsOff()
 }
 
 int HBridgeController::addPwm(const uint32_t channels,
-                              const h_bridge_controller::constants::Polarity polarity,
+                              const ConstantString * const polarity_ptr,
                               const long delay,
                               const long period,
                               const long on_duration,
@@ -240,7 +240,7 @@ int HBridgeController::addPwm(const uint32_t channels,
   }
   h_bridge_controller::constants::PulseInfo pulse_info;
   pulse_info.channels = channels;
-  pulse_info.polarity = polarity;
+  pulse_info.polarity_ptr = polarity_ptr;
   int index = indexed_pulses_.add(pulse_info);
   EventIdPair event_id_pair = event_controller_.addPwmUsingDelay(makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOnCallback),
                                                                  makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOffCallback),
@@ -257,7 +257,7 @@ int HBridgeController::addPwm(const uint32_t channels,
 }
 
 int HBridgeController::startPwm(const uint32_t channels,
-                                const h_bridge_controller::constants::Polarity polarity,
+                                const ConstantString * const polarity_ptr,
                                 const long delay,
                                 const long period,
                                 const long on_duration)
@@ -268,7 +268,7 @@ int HBridgeController::startPwm(const uint32_t channels,
   }
   h_bridge_controller::constants::PulseInfo pulse_info;
   pulse_info.channels = channels;
-  pulse_info.polarity = polarity;
+  pulse_info.polarity_ptr = polarity_ptr;
   int index = indexed_pulses_.add(pulse_info);
   EventIdPair event_id_pair = event_controller_.addInfinitePwmUsingDelay(makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOnCallback),
                                                                          makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOffCallback),
@@ -284,7 +284,7 @@ int HBridgeController::startPwm(const uint32_t channels,
 }
 
 int HBridgeController::addTogglePwm(const uint32_t channels,
-                                    const h_bridge_controller::constants::Polarity polarity,
+                                    const ConstantString * const polarity_ptr,
                                     const long delay,
                                     const long period,
                                     const long on_duration,
@@ -296,7 +296,7 @@ int HBridgeController::addTogglePwm(const uint32_t channels,
   }
   h_bridge_controller::constants::PulseInfo pulse_info;
   pulse_info.channels = channels;
-  pulse_info.polarity = polarity;
+  pulse_info.polarity_ptr = polarity_ptr;
   int index = indexed_pulses_.add(pulse_info);
   EventIdPair event_id_pair = event_controller_.addPwmUsingDelay(makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOnCallback),
                                                                  makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOnReversedCallback),
@@ -313,7 +313,7 @@ int HBridgeController::addTogglePwm(const uint32_t channels,
 }
 
 int HBridgeController::startTogglePwm(const uint32_t channels,
-                                      const h_bridge_controller::constants::Polarity polarity,
+                                      const ConstantString * const polarity_ptr,
                                       const long delay,
                                       const long period,
                                       const long on_duration)
@@ -324,7 +324,7 @@ int HBridgeController::startTogglePwm(const uint32_t channels,
   }
   h_bridge_controller::constants::PulseInfo pulse_info;
   pulse_info.channels = channels;
-  pulse_info.polarity = polarity;
+  pulse_info.polarity_ptr = polarity_ptr;
   int index = indexed_pulses_.add(pulse_info);
   EventIdPair event_id_pair = event_controller_.addInfinitePwmUsingDelay(makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOnCallback),
                                                                          makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOnReversedCallback),
@@ -374,15 +374,15 @@ uint32_t HBridgeController::arrayToChannels(ArduinoJson::JsonArray & channels_ar
   return channels;
 }
 
-constants::Polarity HBridgeController:: stringToPolarity(const char * string)
+ConstantString * const HBridgeController:: stringToPolarityPtr(const char * string)
 {
   if (string == constants::polarity_positive)
   {
-    return constants::POSITIVE;
+    return &constants::polarity_positive;
   }
   else
   {
-    return constants::NEGATIVE;
+    return &constants::polarity_negative;
   }
 }
 
@@ -420,8 +420,8 @@ void HBridgeController::setChannelOnCallback()
   modular_server_.parameter(constants::channel_parameter_name).getValue(channel);
   const char * polarity_string;
   modular_server_.parameter(constants::polarity_parameter_name).getValue(polarity_string);
-  const constants::Polarity polarity = stringToPolarity(polarity_string);
-  setChannelOn(channel,polarity);
+  const ConstantString * const polarity_ptr = stringToPolarityPtr(polarity_string);
+  setChannelOn(channel,polarity_ptr);
 }
 
 void HBridgeController::setChannelOffCallback()
@@ -438,8 +438,8 @@ void HBridgeController::setChannelsOnCallback()
   const char * polarity_string;
   modular_server_.parameter(constants::polarity_parameter_name).getValue(polarity_string);
   const uint32_t channels = arrayToChannels(*channels_array_ptr);
-  const constants::Polarity polarity = stringToPolarity(polarity_string);
-  setChannelsOn(channels,polarity);
+  const ConstantString * const polarity_ptr = stringToPolarityPtr(polarity_string);
+  setChannelsOn(channels,polarity_ptr);
 }
 
 void HBridgeController::setChannelsOffCallback()
@@ -454,8 +454,8 @@ void HBridgeController::setAllChannelsOnCallback()
 {
   const char * polarity_string;
   modular_server_.parameter(constants::polarity_parameter_name).getValue(polarity_string);
-  const constants::Polarity polarity = stringToPolarity(polarity_string);
-  setAllChannelsOn(polarity);
+  const ConstantString * const polarity_ptr = stringToPolarityPtr(polarity_string);
+  setAllChannelsOn(polarity_ptr);
 }
 
 void HBridgeController::setAllChannelsOffCallback()
@@ -478,8 +478,8 @@ void HBridgeController::addPwmCallback()
   long count;
   modular_server_.parameter(constants::count_parameter_name).getValue(count);
   const uint32_t channels = arrayToChannels(*channels_array_ptr);
-  const constants::Polarity polarity = stringToPolarity(polarity_string);
-  int index = addPwm(channels,polarity,delay,period,on_duration,count);
+  const ConstantString * const polarity_ptr = stringToPolarityPtr(polarity_string);
+  int index = addPwm(channels,polarity_ptr,delay,period,on_duration,count);
   if (index >= 0)
   {
     modular_server_.response().returnResult(index);
@@ -503,8 +503,8 @@ void HBridgeController::startPwmCallback()
   long on_duration;
   modular_server_.parameter(constants::on_duration_parameter_name).getValue(on_duration);
   const uint32_t channels = arrayToChannels(*channels_array_ptr);
-  const constants::Polarity polarity = stringToPolarity(polarity_string);
-  int index = startPwm(channels,polarity,delay,period,on_duration);
+  const ConstantString * const polarity_ptr = stringToPolarityPtr(polarity_string);
+  int index = startPwm(channels,polarity_ptr,delay,period,on_duration);
   if (index >= 0)
   {
     modular_server_.response().returnResult(index);
@@ -530,8 +530,8 @@ void HBridgeController::addTogglePwmCallback()
   long count;
   modular_server_.parameter(constants::count_parameter_name).getValue(count);
   const uint32_t channels = arrayToChannels(*channels_array_ptr);
-  const constants::Polarity polarity = stringToPolarity(polarity_string);
-  int index = addTogglePwm(channels,polarity,delay,period,on_duration,count);
+  const ConstantString * const polarity_ptr = stringToPolarityPtr(polarity_string);
+  int index = addTogglePwm(channels,polarity_ptr,delay,period,on_duration,count);
   if (index >= 0)
   {
     modular_server_.response().returnResult(index);
@@ -555,8 +555,8 @@ void HBridgeController::startTogglePwmCallback()
   long on_duration;
   modular_server_.parameter(constants::on_duration_parameter_name).getValue(on_duration);
   const uint32_t channels = arrayToChannels(*channels_array_ptr);
-  const constants::Polarity polarity = stringToPolarity(polarity_string);
-  int index = startTogglePwm(channels,polarity,delay,period,on_duration);
+  const ConstantString * const polarity_ptr = stringToPolarityPtr(polarity_string);
+  int index = startTogglePwm(channels,polarity_ptr,delay,period,on_duration);
   if (index >= 0)
   {
     modular_server_.response().returnResult(index);
@@ -582,8 +582,8 @@ void HBridgeController::stopAllPwmCallback()
 void HBridgeController::setChannelsOnCallback(int index)
 {
   uint32_t & channels = indexed_pulses_[index].channels;
-  constants::Polarity & polarity = indexed_pulses_[index].polarity;
-  setChannelsOn(channels,polarity);
+  const ConstantString * const polarity_ptr = indexed_pulses_[index].polarity_ptr;
+  setChannelsOn(channels,polarity_ptr);
 }
 
 void HBridgeController::setChannelsOffCallback(int index)
@@ -595,8 +595,8 @@ void HBridgeController::setChannelsOffCallback(int index)
 void HBridgeController::setChannelsOnReversedCallback(int index)
 {
   uint32_t & channels = indexed_pulses_[index].channels;
-  constants::Polarity & polarity = indexed_pulses_[index].polarity;
-  constants::Polarity polarity_reversed;
-  polarity_reversed = ((polarity == constants::POSITIVE) ? constants::NEGATIVE : constants::POSITIVE);
-  setChannelsOn(channels,polarity_reversed);
+  const ConstantString * const polarity_ptr = indexed_pulses_[index].polarity_ptr;
+  const ConstantString * polarity_reversed_ptr;
+  polarity_reversed_ptr = ((polarity_ptr == &constants::polarity_positive) ? &constants::polarity_negative : &constants::polarity_positive);
+  setChannelsOn(channels,polarity_reversed_ptr);
 }
