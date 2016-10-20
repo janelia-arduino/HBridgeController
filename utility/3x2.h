@@ -35,7 +35,7 @@ extern const bool channels_enabled_default[CHANNEL_COUNT];
 
 // Methods
 
-// Interrupts
+// Callbacks
 
 // Errors
 }

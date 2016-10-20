@@ -68,37 +68,37 @@ public:
   uint32_t arrayToChannels(ArduinoJson::JsonArray & channels_array);
   ConstantString * const stringToPolarityPtr(const char * string);
 
-  // Callbacks
-  virtual void startPwmCallback(int index);
-  virtual void stopPwmCallback(int index);
+  // Handlers
+  virtual void startPwmHandler(int index);
+  virtual void stopPwmHandler(int index);
 
 private:
   modular_server::Field fields_[h_bridge_controller::constants::FIELD_COUNT_MAX];
   modular_server::Parameter parameters_[h_bridge_controller::constants::PARAMETER_COUNT_MAX];
   modular_server::Method methods_[h_bridge_controller::constants::METHOD_COUNT_MAX];
-  modular_server::Interrupt interrupts_[modular_device::constants::INTERRUPT_COUNT_MAX];
+  modular_server::Callback callbacks_[modular_device::constants::CALLBACK_COUNT_MAX];
 
   EventController<h_bridge_controller::constants::EVENT_COUNT_MAX> event_controller_;
 
   IndexedContainer<h_bridge_controller::constants::PulseInfo,
                    h_bridge_controller::constants::INDEXED_PULSES_COUNT_MAX> indexed_pulses_;
 
-  // Callbacks
-  void setChannelOnCallback();
-  void setChannelOffCallback();
-  void setChannelsOnCallback();
-  void setChannelsOffCallback();
-  void setAllChannelsOnCallback();
-  void setAllChannelsOffCallback();
-  void addPwmCallback();
-  void startPwmCallback();
-  void addTogglePwmCallback();
-  void startTogglePwmCallback();
-  void stopPwmCallback();
-  void stopAllPwmCallback();
-  void setChannelsOnCallback(int index);
-  void setChannelsOffCallback(int index);
-  void setChannelsOnReversedCallback(int index);
+  // Handlers
+  void setChannelOnHandler();
+  void setChannelOffHandler();
+  void setChannelsOnHandler();
+  void setChannelsOffHandler();
+  void setAllChannelsOnHandler();
+  void setAllChannelsOffHandler();
+  void addPwmHandler();
+  void startPwmHandler();
+  void addTogglePwmHandler();
+  void startTogglePwmHandler();
+  void stopPwmHandler();
+  void stopAllPwmHandler();
+  void setChannelsOnHandler(int index);
+  void setChannelsOffHandler(int index);
+  void setChannelsOnReversedHandler(int index);
 
 };
 

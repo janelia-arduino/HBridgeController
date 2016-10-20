@@ -45,7 +45,7 @@ License:
       "polarity_reversed",
       "channels_enabled"
     ],
-    "interrupts":[]
+    "callbacks":[]
   }
 }
 ```
