@@ -44,7 +44,7 @@ CONSTANT_STRING(channels_parameter_name,"channels");
 CONSTANT_STRING(polarity_parameter_name,"polarity");
 CONSTANT_STRING(polarity_positive,"+");
 CONSTANT_STRING(polarity_negative,"-");
-const modular_server::SubsetMemberType polarity_ptr_subset[POLARITY_SUBSET_LENGTH] =
+modular_server::SubsetMemberType polarity_ptr_subset[POLARITY_SUBSET_LENGTH] =
   {
     {.cs_ptr=&polarity_positive},
     {.cs_ptr=&polarity_negative},

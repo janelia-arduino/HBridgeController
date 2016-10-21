@@ -60,7 +60,7 @@ extern ConstantString polarity_parameter_name;
 enum{POLARITY_SUBSET_LENGTH=2};
 extern ConstantString polarity_positive;
 extern ConstantString polarity_negative;
-extern const modular_server::SubsetMemberType polarity_ptr_subset[POLARITY_SUBSET_LENGTH];
+extern modular_server::SubsetMemberType polarity_ptr_subset[POLARITY_SUBSET_LENGTH];
 
 extern ConstantString delay_parameter_name;
 extern const long delay_min;
