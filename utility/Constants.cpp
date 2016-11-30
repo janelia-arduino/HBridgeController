@@ -19,7 +19,7 @@ CONSTANT_STRING(firmware_name,"HBridgeController");
 const modular_server::FirmwareInfo firmware_info =
   {
     .name_ptr=&firmware_name,
-    .version_major=1,
+    .version_major=2,
     .version_minor=0,
     .version_patch=0,
   };
@@ -28,13 +28,15 @@ CONSTANT_STRING(hardware_name,"h_bridge_controller");
 
 const int bad_index = -1;
 
+// Interrupts
+
 // Units
 CONSTANT_STRING(ms_unit,"ms");
 
-// Fields
-CONSTANT_STRING(polarity_reversed_field_name,"polarity_reversed");
+// Properties
+CONSTANT_STRING(polarity_reversed_property_name,"polarityReversed");
 
-CONSTANT_STRING(channels_enabled_field_name,"channels_enabled");
+CONSTANT_STRING(channels_enabled_property_name,"channelsEnabled");
 
 // Parameters
 CONSTANT_STRING(channel_parameter_name,"channel");
@@ -68,19 +70,19 @@ const long count_max = 1000000;
 
 CONSTANT_STRING(pwm_index_parameter_name,"pwm_index");
 
-// Methods
-CONSTANT_STRING(set_channel_on_method_name,"setChannelOn");
-CONSTANT_STRING(set_channel_off_method_name,"setChannelOff");
-CONSTANT_STRING(set_channels_on_method_name,"setChannelsOn");
-CONSTANT_STRING(set_channels_off_method_name,"setChannelsOff");
-CONSTANT_STRING(set_all_channels_on_method_name,"setAllChannelsOn");
-CONSTANT_STRING(set_all_channels_off_method_name,"setAllChannelsOff");
-CONSTANT_STRING(add_pwm_method_name,"addPwm");
-CONSTANT_STRING(start_pwm_method_name,"startPwm");
-CONSTANT_STRING(add_toggle_pwm_method_name,"addTogglePwm");
-CONSTANT_STRING(start_toggle_pwm_method_name,"startTogglePwm");
-CONSTANT_STRING(stop_pwm_method_name,"stopPwm");
-CONSTANT_STRING(stop_all_pwm_method_name,"stopAllPwm");
+// Functions
+CONSTANT_STRING(set_channel_on_function_name,"setChannelOn");
+CONSTANT_STRING(set_channel_off_function_name,"setChannelOff");
+CONSTANT_STRING(set_channels_on_function_name,"setChannelsOn");
+CONSTANT_STRING(set_channels_off_function_name,"setChannelsOff");
+CONSTANT_STRING(set_all_channels_on_function_name,"setAllChannelsOn");
+CONSTANT_STRING(set_all_channels_off_function_name,"setAllChannelsOff");
+CONSTANT_STRING(add_pwm_function_name,"addPwm");
+CONSTANT_STRING(start_pwm_function_name,"startPwm");
+CONSTANT_STRING(add_toggle_pwm_function_name,"addTogglePwm");
+CONSTANT_STRING(start_toggle_pwm_function_name,"startTogglePwm");
+CONSTANT_STRING(stop_pwm_function_name,"stopPwm");
+CONSTANT_STRING(stop_all_pwm_function_name,"stopAllPwm");
 
 // Callbacks
 

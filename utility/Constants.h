@@ -18,10 +18,12 @@ namespace h_bridge_controller
 namespace constants
 {
 //MAX values must be >= 1, >= created/copied count, < RAM limit
-enum{FIELD_COUNT_MAX=2};
+enum{PROPERTY_COUNT_MAX=2};
 enum{PARAMETER_COUNT_MAX=8};
-enum{METHOD_COUNT_MAX=12};
+enum{FUNCTION_COUNT_MAX=12};
 enum{CALLBACK_COUNT_MAX=1};
+
+enum{INTERRUPT_COUNT_MAX=1};
 
 extern ConstantString device_name;
 
@@ -42,14 +44,16 @@ struct PulseInfo
   EventIdPair event_id_pair;
 };
 
+// Interrupts
+
 // Units
 extern ConstantString ms_unit;
 
-// Fields
-// Field values must be long, double, bool, long[], double[], bool[], char[], ConstantString *
-extern ConstantString polarity_reversed_field_name;
+// Properties
+// Property values must be long, double, bool, long[], double[], bool[], char[], ConstantString *
+extern ConstantString polarity_reversed_property_name;
 
-extern ConstantString channels_enabled_field_name;
+extern ConstantString channels_enabled_property_name;
 
 // Parameters
 extern ConstantString channel_parameter_name;
@@ -80,19 +84,19 @@ extern const long count_max;
 
 extern ConstantString pwm_index_parameter_name;
 
-// Methods
-extern ConstantString set_channel_on_method_name;
-extern ConstantString set_channel_off_method_name;
-extern ConstantString set_channels_on_method_name;
-extern ConstantString set_channels_off_method_name;
-extern ConstantString set_all_channels_on_method_name;
-extern ConstantString set_all_channels_off_method_name;
-extern ConstantString add_pwm_method_name;
-extern ConstantString start_pwm_method_name;
-extern ConstantString add_toggle_pwm_method_name;
-extern ConstantString start_toggle_pwm_method_name;
-extern ConstantString stop_pwm_method_name;
-extern ConstantString stop_all_pwm_method_name;
+// Functions
+extern ConstantString set_channel_on_function_name;
+extern ConstantString set_channel_off_function_name;
+extern ConstantString set_channels_on_function_name;
+extern ConstantString set_channels_off_function_name;
+extern ConstantString set_all_channels_on_function_name;
+extern ConstantString set_all_channels_off_function_name;
+extern ConstantString add_pwm_function_name;
+extern ConstantString start_pwm_function_name;
+extern ConstantString add_toggle_pwm_function_name;
+extern ConstantString start_toggle_pwm_function_name;
+extern ConstantString stop_pwm_function_name;
+extern ConstantString stop_all_pwm_function_name;
 
 // Callbacks
 

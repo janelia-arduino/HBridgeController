@@ -17,7 +17,7 @@ License:
   "id":"getApi",
   "result":{
     "firmware":["HBridgeController"],
-    "methods":[
+    "functions":[
       "setChannelOn",
       "setChannelOff",
       "setChannelsOn",
@@ -41,9 +41,9 @@ License:
       "count",
       "pwm_index"
     ],
-    "fields":[
-      "polarity_reversed",
-      "channels_enabled"
+    "properties":[
+      "polarityReversed",
+      "channelsEnabled"
     ],
     "callbacks":[]
   }

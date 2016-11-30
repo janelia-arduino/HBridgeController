@@ -34,20 +34,23 @@ void HBridgeController::setup()
   // Set Device ID
   modular_server_.setDeviceName(constants::device_name);
 
-  // Add Hardware Info
-  modular_server_.addHardwareInfo(constants::hardware_info);
+  // Add Hardware
+  modular_server_.addHardware(constants::hardware_info,
+                              interrupts_);
+
+  // Interrupts
 
   // Add Firmware
   modular_server_.addFirmware(constants::firmware_info,
-                              fields_,
+                              properties_,
                               parameters_,
-                              methods_,
+                              functions_,
                               callbacks_);
-  // Fields
-  modular_server::Field & polarity_reversed_field = modular_server_.createField(constants::polarity_reversed_field_name,constants::polarity_reversed_default);
+  // Properties
+  modular_server::Property & polarity_reversed_property = modular_server_.createProperty(constants::polarity_reversed_property_name,constants::polarity_reversed_default);
 
-  modular_server::Field & channels_enabled_field = modular_server_.createField(constants::channels_enabled_field_name,constants::channels_enabled_default);
-  channels_enabled_field.attachPostSetElementValueFunctor(makeFunctor((Functor1<const size_t> *)0,*this,&HBridgeController::setChannelOff));
+  modular_server::Property & channels_enabled_property = modular_server_.createProperty(constants::channels_enabled_property_name,constants::channels_enabled_default);
+  channels_enabled_property.attachPostSetElementValueFunctor(makeFunctor((Functor1<const size_t> *)0,*this,&HBridgeController::setChannelOff));
 
   // Parameters
   modular_server::Parameter & channel_parameter = modular_server_.createParameter(constants::channel_parameter_name);
@@ -80,76 +83,76 @@ void HBridgeController::setup()
   modular_server::Parameter & pwm_index_parameter = modular_server_.createParameter(constants::pwm_index_parameter_name);
   pwm_index_parameter.setRange(0,constants::INDEXED_PULSES_COUNT_MAX-1);
 
-  // Methods
-  modular_server::Method & set_channel_on_method = modular_server_.createMethod(constants::set_channel_on_method_name);
-  set_channel_on_method.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::setChannelOnHandler));
-  set_channel_on_method.addParameter(channel_parameter);
-  set_channel_on_method.addParameter(polarity_parameter);
+  // Functions
+  modular_server::Function & set_channel_on_function = modular_server_.createFunction(constants::set_channel_on_function_name);
+  set_channel_on_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::setChannelOnHandler));
+  set_channel_on_function.addParameter(channel_parameter);
+  set_channel_on_function.addParameter(polarity_parameter);
 
-  modular_server::Method & set_channel_off_method = modular_server_.createMethod(constants::set_channel_off_method_name);
-  set_channel_off_method.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::setChannelOffHandler));
-  set_channel_off_method.addParameter(channel_parameter);
+  modular_server::Function & set_channel_off_function = modular_server_.createFunction(constants::set_channel_off_function_name);
+  set_channel_off_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::setChannelOffHandler));
+  set_channel_off_function.addParameter(channel_parameter);
 
-  modular_server::Method & set_channels_on_method = modular_server_.createMethod(constants::set_channels_on_method_name);
-  set_channels_on_method.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::setChannelsOnHandler));
-  set_channels_on_method.addParameter(channels_parameter);
-  set_channels_on_method.addParameter(polarity_parameter);
+  modular_server::Function & set_channels_on_function = modular_server_.createFunction(constants::set_channels_on_function_name);
+  set_channels_on_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::setChannelsOnHandler));
+  set_channels_on_function.addParameter(channels_parameter);
+  set_channels_on_function.addParameter(polarity_parameter);
 
-  modular_server::Method & set_channels_off_method = modular_server_.createMethod(constants::set_channels_off_method_name);
-  set_channels_off_method.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::setChannelsOffHandler));
-  set_channels_off_method.addParameter(channels_parameter);
+  modular_server::Function & set_channels_off_function = modular_server_.createFunction(constants::set_channels_off_function_name);
+  set_channels_off_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::setChannelsOffHandler));
+  set_channels_off_function.addParameter(channels_parameter);
 
-  modular_server::Method & set_all_channels_on_method = modular_server_.createMethod(constants::set_all_channels_on_method_name);
-  set_all_channels_on_method.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::setAllChannelsOnHandler));
-  set_all_channels_on_method.addParameter(polarity_parameter);
+  modular_server::Function & set_all_channels_on_function = modular_server_.createFunction(constants::set_all_channels_on_function_name);
+  set_all_channels_on_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::setAllChannelsOnHandler));
+  set_all_channels_on_function.addParameter(polarity_parameter);
 
-  modular_server::Method & set_all_channels_off_method = modular_server_.createMethod(constants::set_all_channels_off_method_name);
-  set_all_channels_off_method.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::setAllChannelsOffHandler));
+  modular_server::Function & set_all_channels_off_function = modular_server_.createFunction(constants::set_all_channels_off_function_name);
+  set_all_channels_off_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::setAllChannelsOffHandler));
 
-  modular_server::Method & add_pwm_method = modular_server_.createMethod(constants::add_pwm_method_name);
-  add_pwm_method.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::addPwmHandler));
-  add_pwm_method.addParameter(channels_parameter);
-  add_pwm_method.addParameter(polarity_parameter);
-  add_pwm_method.addParameter(delay_parameter);
-  add_pwm_method.addParameter(period_parameter);
-  add_pwm_method.addParameter(on_duration_parameter);
-  add_pwm_method.addParameter(count_parameter);
-  add_pwm_method.setReturnTypeLong();
+  modular_server::Function & add_pwm_function = modular_server_.createFunction(constants::add_pwm_function_name);
+  add_pwm_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::addPwmHandler));
+  add_pwm_function.addParameter(channels_parameter);
+  add_pwm_function.addParameter(polarity_parameter);
+  add_pwm_function.addParameter(delay_parameter);
+  add_pwm_function.addParameter(period_parameter);
+  add_pwm_function.addParameter(on_duration_parameter);
+  add_pwm_function.addParameter(count_parameter);
+  add_pwm_function.setReturnTypeLong();
 
-  modular_server::Method & start_pwm_method = modular_server_.createMethod(constants::start_pwm_method_name);
-  start_pwm_method.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::startPwmHandler));
-  start_pwm_method.addParameter(channels_parameter);
-  start_pwm_method.addParameter(polarity_parameter);
-  start_pwm_method.addParameter(delay_parameter);
-  start_pwm_method.addParameter(period_parameter);
-  start_pwm_method.addParameter(on_duration_parameter);
-  start_pwm_method.setReturnTypeLong();
+  modular_server::Function & start_pwm_function = modular_server_.createFunction(constants::start_pwm_function_name);
+  start_pwm_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::startPwmHandler));
+  start_pwm_function.addParameter(channels_parameter);
+  start_pwm_function.addParameter(polarity_parameter);
+  start_pwm_function.addParameter(delay_parameter);
+  start_pwm_function.addParameter(period_parameter);
+  start_pwm_function.addParameter(on_duration_parameter);
+  start_pwm_function.setReturnTypeLong();
 
-  modular_server::Method & add_toggle_pwm_method = modular_server_.createMethod(constants::add_toggle_pwm_method_name);
-  add_toggle_pwm_method.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::addTogglePwmHandler));
-  add_toggle_pwm_method.addParameter(channels_parameter);
-  add_toggle_pwm_method.addParameter(polarity_parameter);
-  add_toggle_pwm_method.addParameter(delay_parameter);
-  add_toggle_pwm_method.addParameter(period_parameter);
-  add_toggle_pwm_method.addParameter(on_duration_parameter);
-  add_toggle_pwm_method.addParameter(count_parameter);
-  add_toggle_pwm_method.setReturnTypeLong();
+  modular_server::Function & add_toggle_pwm_function = modular_server_.createFunction(constants::add_toggle_pwm_function_name);
+  add_toggle_pwm_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::addTogglePwmHandler));
+  add_toggle_pwm_function.addParameter(channels_parameter);
+  add_toggle_pwm_function.addParameter(polarity_parameter);
+  add_toggle_pwm_function.addParameter(delay_parameter);
+  add_toggle_pwm_function.addParameter(period_parameter);
+  add_toggle_pwm_function.addParameter(on_duration_parameter);
+  add_toggle_pwm_function.addParameter(count_parameter);
+  add_toggle_pwm_function.setReturnTypeLong();
 
-  modular_server::Method & start_toggle_pwm_method = modular_server_.createMethod(constants::start_toggle_pwm_method_name);
-  start_toggle_pwm_method.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::startTogglePwmHandler));
-  start_toggle_pwm_method.addParameter(channels_parameter);
-  start_toggle_pwm_method.addParameter(polarity_parameter);
-  start_toggle_pwm_method.addParameter(delay_parameter);
-  start_toggle_pwm_method.addParameter(period_parameter);
-  start_toggle_pwm_method.addParameter(on_duration_parameter);
-  start_toggle_pwm_method.setReturnTypeLong();
+  modular_server::Function & start_toggle_pwm_function = modular_server_.createFunction(constants::start_toggle_pwm_function_name);
+  start_toggle_pwm_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::startTogglePwmHandler));
+  start_toggle_pwm_function.addParameter(channels_parameter);
+  start_toggle_pwm_function.addParameter(polarity_parameter);
+  start_toggle_pwm_function.addParameter(delay_parameter);
+  start_toggle_pwm_function.addParameter(period_parameter);
+  start_toggle_pwm_function.addParameter(on_duration_parameter);
+  start_toggle_pwm_function.setReturnTypeLong();
 
-  modular_server::Method & stop_pwm_method = modular_server_.createMethod(constants::stop_pwm_method_name);
-  stop_pwm_method.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::stopPwmHandler));
-  stop_pwm_method.addParameter(pwm_index_parameter);
+  modular_server::Function & stop_pwm_function = modular_server_.createFunction(constants::stop_pwm_function_name);
+  stop_pwm_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::stopPwmHandler));
+  stop_pwm_function.addParameter(pwm_index_parameter);
 
-  modular_server::Method & stop_all_pwm_method = modular_server_.createMethod(constants::stop_all_pwm_method_name);
-  stop_all_pwm_method.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::stopAllPwmHandler));
+  modular_server::Function & stop_all_pwm_function = modular_server_.createFunction(constants::stop_all_pwm_function_name);
+  stop_all_pwm_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::stopAllPwmHandler));
 
   // Callbacks
 
@@ -158,14 +161,14 @@ void HBridgeController::setup()
 void HBridgeController::setChannelOn(const size_t channel, const ConstantString * const polarity_ptr)
 {
   bool channel_enabled;
-  modular_server_.field(constants::channels_enabled_field_name).getElementValue(channel,
+  modular_server_.property(constants::channels_enabled_property_name).getElementValue(channel,
                                                                                 channel_enabled);
   if (!channel_enabled)
   {
     return;
   }
   bool channel_polarity_reversed;
-  modular_server_.field(constants::polarity_reversed_field_name).getElementValue(channel,
+  modular_server_.property(constants::polarity_reversed_property_name).getElementValue(channel,
                                                                                  channel_polarity_reversed);
   const ConstantString * polarity_corrected_ptr = polarity_ptr;
   if (channel_polarity_reversed)
@@ -377,7 +380,7 @@ uint32_t HBridgeController::arrayToChannels(ArduinoJson::JsonArray & channels_ar
   return channels;
 }
 
-ConstantString * const HBridgeController:: stringToPolarityPtr(const char * string)
+ConstantString * const HBridgeController::stringToPolarityPtr(const char * string)
 {
   if (string == constants::polarity_positive)
   {
@@ -401,10 +404,10 @@ ConstantString * const HBridgeController:: stringToPolarityPtr(const char * stri
 //
 // For more info read about ArduinoJson parsing https://github.com/janelia-arduino/ArduinoJson
 //
-// modular_server_.field(field_name).getValue(value) value type must match the field default type
-// modular_server_.field(field_name).setValue(value) value type must match the field default type
-// modular_server_.field(field_name).getElementValue(value) value type must match the field array element default type
-// modular_server_.field(field_name).setElementValue(value) value type must match the field array element default type
+// modular_server_.property(property_name).getValue(value) value type must match the property default type
+// modular_server_.property(property_name).setValue(value) value type must match the property default type
+// modular_server_.property(property_name).getElementValue(value) value type must match the property array element default type
+// modular_server_.property(property_name).setElementValue(value) value type must match the property array element default type
 
 void HBridgeController::startPwmHandler(int index)
 {
