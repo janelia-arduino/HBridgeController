@@ -16,6 +16,8 @@ namespace h_bridge_controller
 {
 namespace constants
 {
+enum{INTERRUPT_COUNT_MAX=1};
+
 enum {CHANNEL_COUNT=2};
 
 extern const size_t enable_pins[CHANNEL_COUNT];

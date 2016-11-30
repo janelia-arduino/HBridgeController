@@ -23,8 +23,6 @@ enum{PARAMETER_COUNT_MAX=8};
 enum{FUNCTION_COUNT_MAX=12};
 enum{CALLBACK_COUNT_MAX=1};
 
-enum{INTERRUPT_COUNT_MAX=1};
-
 extern ConstantString device_name;
 
 extern ConstantString firmware_name;

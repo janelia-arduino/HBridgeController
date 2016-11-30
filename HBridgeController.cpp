@@ -39,6 +39,20 @@ void HBridgeController::setup()
                               interrupts_);
 
   // Interrupts
+#if defined(__AVR_ATmega2560__)
+  modular_server::Interrupt & bnc_b_interrupt = modular_server_.createInterrupt(constants::bnc_b_interrupt_name,
+                                                                                constants::bnc_b_pin);
+
+  modular_server::Interrupt & switch_0_interrupt = modular_server_.createInterrupt(constants::switch_0_interrupt_name,
+                                                                                   constants::switch_0_pin);
+
+  modular_server::Interrupt & switch_1_interrupt = modular_server_.createInterrupt(constants::switch_1_interrupt_name,
+                                                                                   constants::switch_1_pin);
+
+  modular_server::Interrupt & switch_2_interrupt = modular_server_.createInterrupt(constants::switch_2_interrupt_name,
+                                                                                   constants::switch_2_pin);
+
+#endif
 
   // Add Firmware
   modular_server_.addFirmware(constants::firmware_info,
