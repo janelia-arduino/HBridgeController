@@ -78,7 +78,7 @@ private:
   modular_server::Property properties_[h_bridge_controller::constants::PROPERTY_COUNT_MAX];
   modular_server::Parameter parameters_[h_bridge_controller::constants::PARAMETER_COUNT_MAX];
   modular_server::Function functions_[h_bridge_controller::constants::FUNCTION_COUNT_MAX];
-  modular_server::Callback callbacks_[modular_device::constants::CALLBACK_COUNT_MAX];
+  modular_server::Callback callbacks_[h_bridge_controller::constants::CALLBACK_COUNT_MAX];
 
   EventController<h_bridge_controller::constants::EVENT_COUNT_MAX> event_controller_;
 
