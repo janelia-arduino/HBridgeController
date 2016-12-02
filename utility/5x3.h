@@ -16,6 +16,7 @@ namespace h_bridge_controller
 {
 namespace constants
 {
+//MAX values must be >= 1, >= created/copied count, < RAM limit
 enum{INTERRUPT_COUNT_MAX=4};
 
 enum {CHANNEL_COUNT=4};
