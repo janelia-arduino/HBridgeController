@@ -54,19 +54,19 @@ modular_server::SubsetMemberType polarity_ptr_subset[POLARITY_SUBSET_LENGTH] =
 
 CONSTANT_STRING(delay_parameter_name,"delay");
 const long delay_min = 0;
-const long delay_max = 1000000;
+const long delay_max = 2000000000;
 
 CONSTANT_STRING(period_parameter_name,"period");
 const long period_min = 2;
-const long period_max = 1000000;
+const long period_max = 2000000000;
 
 CONSTANT_STRING(on_duration_parameter_name,"on_duration");
 const long on_duration_min = 1;
-const long on_duration_max = 1000000;
+const long on_duration_max = 2000000000;
 
 CONSTANT_STRING(count_parameter_name,"count");
 const long count_min = 1;
-const long count_max = 1000000;
+const long count_max = 2000000000;
 
 CONSTANT_STRING(pwm_index_parameter_name,"pwm_index");
 
