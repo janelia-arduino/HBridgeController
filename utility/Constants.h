@@ -48,7 +48,7 @@ struct PulseInfo
 extern ConstantString ms_unit;
 
 // Properties
-// Property values must be long, double, bool, long[], double[], bool[], char[], ConstantString *
+// Property values must be long, double, bool, long[], double[], bool[], char[], ConstantString *, (ConstantString *)[]
 extern ConstantString polarity_reversed_property_name;
 
 extern ConstantString channels_enabled_property_name;

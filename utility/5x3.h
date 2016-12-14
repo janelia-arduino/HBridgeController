@@ -42,7 +42,7 @@ extern const size_t switch_2_pin;
 // Units
 
 // Properties
-// Property values must be long, double, bool, long[], double[], bool[], char[], ConstantString *
+// Property values must be long, double, bool, long[], double[], bool[], char[], ConstantString *, (ConstantString *)[]
 extern const bool polarity_reversed_default[CHANNEL_COUNT];
 
 extern const bool channels_enabled_default[CHANNEL_COUNT];
