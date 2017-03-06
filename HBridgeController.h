@@ -25,12 +25,12 @@
 #include "EventController.h"
 
 #include "ModularServer.h"
-#include "ModularDevice.h"
+#include "ModularDeviceBase.h"
 
 #include "utility/Constants.h"
 
 
-class HBridgeController : public ModularDevice
+class HBridgeController : public ModularDeviceBase
 {
 public:
   HBridgeController();

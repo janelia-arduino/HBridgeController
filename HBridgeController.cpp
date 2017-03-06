@@ -17,7 +17,7 @@ HBridgeController::HBridgeController()
 void HBridgeController::setup()
 {
   // Parent Setup
-  ModularDevice::setup();
+  ModularDeviceBase::setup();
 
   // Event Controller Setup
   event_controller_.setup();
