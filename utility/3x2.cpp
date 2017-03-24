@@ -22,9 +22,9 @@ const modular_server::HardwareInfo hardware_info =
     .version_minor=0,
   };
 
-const size_t enable_pins[CHANNEL_COUNT] = {8,9};
-const size_t dir_a_pins[CHANNEL_COUNT] = {30,32};
-const size_t dir_b_pins[CHANNEL_COUNT] = {31,33};
+const size_t enable_pins[CHANNEL_COUNT] = {22,23};
+const size_t dir_a_pins[CHANNEL_COUNT] = {18,20};
+const size_t dir_b_pins[CHANNEL_COUNT] = {19,21};
 const size_t sense_pins[CHANNEL_COUNT] = {0,1};
 
 // Interrupts
