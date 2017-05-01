@@ -26,6 +26,8 @@ const size_t enable_pins[CHANNEL_COUNT] = {22,23};
 const size_t dir_a_pins[CHANNEL_COUNT] = {18,20};
 const size_t dir_b_pins[CHANNEL_COUNT] = {19,21};
 const size_t sense_pins[CHANNEL_COUNT] = {0,1};
+const size_t user_enable_pins[CHANNEL_COUNT] = {5,6};
+const uint8_t user_enabled_polarity[CHANNEL_COUNT] = {LOW,LOW};
 
 // Interrupts
 

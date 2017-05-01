@@ -29,6 +29,7 @@ void HBridgeController::setup()
     digitalWrite(constants::enable_pins[channel],LOW);
     pinMode(constants::dir_a_pins[channel],OUTPUT);
     pinMode(constants::dir_b_pins[channel],OUTPUT);
+    pinMode(constants::user_enable_pins[channel],INPUT_PULLUP);
   }
 
   // Set Device ID
@@ -123,6 +124,15 @@ void HBridgeController::setup()
   modular_server::Function & set_all_channels_off_function = modular_server_.createFunction(constants::set_all_channels_off_function_name);
   set_all_channels_off_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::setAllChannelsOffHandler));
 
+  modular_server::Function & channel_on_function = modular_server_.createFunction(constants::channel_on_function_name);
+  channel_on_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::channelOnHandler));
+  channel_on_function.addParameter(channel_parameter);
+  channel_on_function.setReturnTypeBool();
+
+  modular_server::Function & channels_on_function = modular_server_.createFunction(constants::channels_on_function_name);
+  channels_on_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::channelsOnHandler));
+  channels_on_function.setReturnTypeArray();
+
   modular_server::Function & add_pwm_function = modular_server_.createFunction(constants::add_pwm_function_name);
   add_pwm_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::addPwmHandler));
   add_pwm_function.addParameter(channels_parameter);
@@ -168,22 +178,45 @@ void HBridgeController::setup()
   modular_server::Function & stop_all_pwm_function = modular_server_.createFunction(constants::stop_all_pwm_function_name);
   stop_all_pwm_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::stopAllPwmHandler));
 
+  modular_server::Function & board_switch_enabled_function = modular_server_.createFunction(constants::board_switch_enabled_function_name);
+  board_switch_enabled_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::boardSwitchEnabledHandler));
+  board_switch_enabled_function.setReturnTypeArray();
+
+  modular_server::Function & board_switch_and_property_enabled_function = modular_server_.createFunction(constants::board_switch_and_property_enabled_function_name);
+  board_switch_and_property_enabled_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::boardSwitchAndPropertyEnabledHandler));
+  board_switch_and_property_enabled_function.setReturnTypeArray();
+
   // Callbacks
 
 }
 
+void HBridgeController::update()
+{
+  // Parent Update
+  ModularDeviceBase::update();
+
+  bool enabled;
+  for (int channel=0; channel<constants::CHANNEL_COUNT; ++channel)
+  {
+    enabled = (digitalRead(constants::user_enable_pins[channel]) ==
+               constants::user_enabled_polarity[channel]);
+    board_switch_enabled_[channel] = enabled;
+    if (!enabled && channelOn(channel))
+    {
+      setChannelOff(channel);
+    }
+  }
+}
+
 void HBridgeController::setChannelOn(const size_t channel, const ConstantString & polarity)
 {
-  bool channel_enabled;
-  modular_server_.property(constants::channels_enabled_property_name).getElementValue(channel,
-                                                                                channel_enabled);
-  if (!channel_enabled)
+  if (!boardSwitchAndPropertyEnabled(channel))
   {
     return;
   }
   bool channel_polarity_reversed;
   modular_server_.property(constants::polarity_reversed_property_name).getElementValue(channel,
-                                                                                 channel_polarity_reversed);
+                                                                                       channel_polarity_reversed);
   const ConstantString * polarity_corrected_ptr = &polarity;
   if (channel_polarity_reversed)
   {
@@ -200,11 +233,13 @@ void HBridgeController::setChannelOn(const size_t channel, const ConstantString 
     digitalWrite(constants::dir_b_pins[channel],HIGH);
   }
   digitalWrite(constants::enable_pins[channel],HIGH);
+  channels_on_[channel] = true;
 }
 
 void HBridgeController::setChannelOff(const size_t channel)
 {
   digitalWrite(constants::enable_pins[channel],LOW);
+  channels_on_[channel] = false;
 }
 
 void HBridgeController::setChannelsOn(const uint32_t channels, const ConstantString & polarity)
@@ -245,6 +280,25 @@ void HBridgeController::setAllChannelsOff()
   {
     setChannelOff(channel);
   }
+}
+
+bool HBridgeController::channelOn(const size_t channel)
+{
+  return channels_on_[channel];
+}
+
+uint32_t HBridgeController::channelsOn()
+{
+  uint32_t channels_on = 0;
+  uint32_t bit = 1;
+  for (int channel=0; channel<constants::CHANNEL_COUNT; ++channel)
+  {
+    if (channelOn(channel))
+    {
+      channels_on |= bit << channel;
+    }
+  }
+  return channels_on;
 }
 
 int HBridgeController::addPwm(const uint32_t channels,
@@ -406,6 +460,19 @@ const ConstantString & HBridgeController::stringToPolarity(const char * string)
   }
 }
 
+bool HBridgeController::boardSwitchEnabled(const size_t channel)
+{
+  return board_switch_enabled_[channel];
+}
+
+bool HBridgeController::boardSwitchAndPropertyEnabled(const size_t channel)
+{
+  bool channel_enabled;
+  modular_server_.property(constants::channels_enabled_property_name).getElementValue(channel,
+                                                                                      channel_enabled);
+  return (channel_enabled && boardSwitchEnabled(channel));
+}
+
 // Handlers must be non-blocking (avoid 'delay')
 //
 // modular_server_.parameter(parameter_name).getValue(value) value type must be either:
@@ -481,6 +548,28 @@ void HBridgeController::setAllChannelsOnHandler()
 void HBridgeController::setAllChannelsOffHandler()
 {
   setAllChannelsOff();
+}
+
+void HBridgeController::channelOnHandler()
+{
+  int channel;
+  modular_server_.parameter(constants::channel_parameter_name).getValue(channel);
+  modular_server_.response().returnResult(channelOn(channel));
+}
+
+void HBridgeController::channelsOnHandler()
+{
+  modular_server_.response().writeResultKey();
+
+  modular_server_.response().beginArray();
+
+  for (int channel=0; channel<constants::CHANNEL_COUNT; ++channel)
+  {
+    modular_server_.response().write(channelOn(channel));
+  }
+
+  modular_server_.response().endArray();
+
 }
 
 void HBridgeController::addPwmHandler()
@@ -597,6 +686,36 @@ void HBridgeController::stopPwmHandler()
 void HBridgeController::stopAllPwmHandler()
 {
   stopAllPwm();
+}
+
+void HBridgeController::boardSwitchEnabledHandler()
+{
+  modular_server_.response().writeResultKey();
+
+  modular_server_.response().beginArray();
+
+  for (int channel=0; channel<constants::CHANNEL_COUNT; ++channel)
+  {
+    modular_server_.response().write(boardSwitchEnabled(channel));
+  }
+
+  modular_server_.response().endArray();
+
+}
+
+void HBridgeController::boardSwitchAndPropertyEnabledHandler()
+{
+  modular_server_.response().writeResultKey();
+
+  modular_server_.response().beginArray();
+
+  for (int channel=0; channel<constants::CHANNEL_COUNT; ++channel)
+  {
+    modular_server_.response().write(boardSwitchAndPropertyEnabled(channel));
+  }
+
+  modular_server_.response().endArray();
+
 }
 
 void HBridgeController::setChannelsOnHandler(int index)

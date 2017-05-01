@@ -77,12 +77,16 @@ CONSTANT_STRING(set_channels_on_function_name,"setChannelsOn");
 CONSTANT_STRING(set_channels_off_function_name,"setChannelsOff");
 CONSTANT_STRING(set_all_channels_on_function_name,"setAllChannelsOn");
 CONSTANT_STRING(set_all_channels_off_function_name,"setAllChannelsOff");
+CONSTANT_STRING(channel_on_function_name,"channelOn");
+CONSTANT_STRING(channels_on_function_name,"channelsOn");
 CONSTANT_STRING(add_pwm_function_name,"addPwm");
 CONSTANT_STRING(start_pwm_function_name,"startPwm");
 CONSTANT_STRING(add_toggle_pwm_function_name,"addTogglePwm");
 CONSTANT_STRING(start_toggle_pwm_function_name,"startTogglePwm");
 CONSTANT_STRING(stop_pwm_function_name,"stopPwm");
 CONSTANT_STRING(stop_all_pwm_function_name,"stopAllPwm");
+CONSTANT_STRING(board_switch_enabled_function_name,"boardSwitchEnabled");
+CONSTANT_STRING(board_switch_and_property_enabled_function_name,"boardSwitchAndPropertyEnabled");
 
 // Callbacks
 

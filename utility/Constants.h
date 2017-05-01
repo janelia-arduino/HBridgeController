@@ -20,7 +20,7 @@ namespace constants
 //MAX values must be >= 1, >= created/copied count, < RAM limit
 enum{PROPERTY_COUNT_MAX=2};
 enum{PARAMETER_COUNT_MAX=8};
-enum{FUNCTION_COUNT_MAX=12};
+enum{FUNCTION_COUNT_MAX=16};
 enum{CALLBACK_COUNT_MAX=1};
 
 extern ConstantString device_name;
@@ -38,7 +38,7 @@ extern const int bad_index;
 struct PulseInfo
 {
   uint32_t channels;
-  ConstantString * polarity_ptr;
+  const ConstantString * polarity_ptr;
   EventIdPair event_id_pair;
 };
 
@@ -89,12 +89,16 @@ extern ConstantString set_channels_on_function_name;
 extern ConstantString set_channels_off_function_name;
 extern ConstantString set_all_channels_on_function_name;
 extern ConstantString set_all_channels_off_function_name;
+extern ConstantString channel_on_function_name;
+extern ConstantString channels_on_function_name;
 extern ConstantString add_pwm_function_name;
 extern ConstantString start_pwm_function_name;
 extern ConstantString add_toggle_pwm_function_name;
 extern ConstantString start_toggle_pwm_function_name;
 extern ConstantString stop_pwm_function_name;
 extern ConstantString stop_all_pwm_function_name;
+extern ConstantString board_switch_enabled_function_name;
+extern ConstantString board_switch_and_property_enabled_function_name;
 
 // Callbacks
 

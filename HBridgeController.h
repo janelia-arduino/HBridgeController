@@ -35,12 +35,16 @@ class HBridgeController : public ModularDeviceBase
 public:
   HBridgeController();
   virtual void setup();
+  virtual void update();
   void setChannelOn(const size_t channel, const ConstantString & polarity);
   void setChannelOff(const size_t channel);
   void setChannelsOn(const uint32_t channels, const ConstantString & polarity);
   void setChannelsOff(const uint32_t channels);
   void setAllChannelsOn(const ConstantString & polarity);
   void setAllChannelsOff();
+  bool channelOn(const size_t channel);
+  uint32_t channelsOn();
+
   int addPwm(const uint32_t channels,
              const ConstantString & polarity,
              const long delay,
@@ -68,6 +72,9 @@ public:
   uint32_t arrayToChannels(ArduinoJson::JsonArray & channels_array);
   const ConstantString & stringToPolarity(const char * string);
 
+  bool boardSwitchEnabled(const size_t channel);
+  bool boardSwitchAndPropertyEnabled(const size_t channel);
+
   // Handlers
   virtual void startPwmHandler(int index);
   virtual void stopPwmHandler(int index);
@@ -85,6 +92,9 @@ private:
   IndexedContainer<h_bridge_controller::constants::PulseInfo,
                    h_bridge_controller::constants::INDEXED_PULSES_COUNT_MAX> indexed_pulses_;
 
+  bool board_switch_enabled_[h_bridge_controller::constants::CHANNEL_COUNT];
+  bool channels_on_[h_bridge_controller::constants::CHANNEL_COUNT];
+
   // Handlers
   void setChannelOnHandler();
   void setChannelOffHandler();
@@ -92,12 +102,16 @@ private:
   void setChannelsOffHandler();
   void setAllChannelsOnHandler();
   void setAllChannelsOffHandler();
+  void channelOnHandler();
+  void channelsOnHandler();
   void addPwmHandler();
   void startPwmHandler();
   void addTogglePwmHandler();
   void startTogglePwmHandler();
   void stopPwmHandler();
   void stopAllPwmHandler();
+  void boardSwitchEnabledHandler();
+  void boardSwitchAndPropertyEnabledHandler();
   void setChannelsOnHandler(int index);
   void setChannelsOffHandler(int index);
   void setChannelsOnReversedHandler(int index);
