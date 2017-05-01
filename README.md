@@ -28,12 +28,16 @@ License:
       "setChannelsOff",
       "setAllChannelsOn",
       "setAllChannelsOff",
+      "channelOn",
+      "channelsOn",
       "addPwm",
       "startPwm",
       "addTogglePwm",
       "startTogglePwm",
       "stopPwm",
-      "stopAllPwm"
+      "stopAllPwm",
+      "boardSwitchEnabled",
+      "boardSwitchAndPropertyEnabled"
     ],
     "parameters":[
       "channel",
