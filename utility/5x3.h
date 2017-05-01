@@ -10,7 +10,43 @@
 #include "Constants.h"
 
 
-#if defined(__AVR_ATmega2560__)
+#if defined(__MK64FX512__)
+
+namespace h_bridge_controller
+{
+namespace constants
+{
+//MAX values must be >= 1, >= created/copied count, < RAM limit
+enum{INTERRUPT_COUNT_MAX=4};
+
+enum {CHANNEL_COUNT=4};
+
+extern const size_t enable_pins[CHANNEL_COUNT];
+extern const size_t dir_a_pins[CHANNEL_COUNT];
+extern const size_t dir_b_pins[CHANNEL_COUNT];
+extern const size_t sense_pins[CHANNEL_COUNT];
+
+// Interrupts
+
+// Units
+
+// Properties
+// Property values must be long, double, bool, long[], double[], bool[], char[], ConstantString *, (ConstantString *)[]
+extern const bool polarity_reversed_default[CHANNEL_COUNT];
+
+extern const bool channels_enabled_default[CHANNEL_COUNT];
+
+// Parameters
+
+// Functions
+
+// Callbacks
+
+// Errors
+}
+}
+
+#elif defined(__AVR_ATmega2560__)
 
 namespace h_bridge_controller
 {
