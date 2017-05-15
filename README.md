@@ -79,54 +79,53 @@ License:
         "parameters":[
           "channel",
           "polarity"
-        ],
-        "result_type":null
+        ]
       },
       {
         "name":"setChannelOff",
         "parameters":[
           "channel"
-        ],
-        "result_type":null
+        ]
       },
       {
         "name":"setChannelsOn",
         "parameters":[
           "channels",
           "polarity"
-        ],
-        "result_type":null
+        ]
       },
       {
         "name":"setChannelsOff",
         "parameters":[
           "channels"
-        ],
-        "result_type":null
+        ]
       },
       {
         "name":"setAllChannelsOn",
         "parameters":[
           "polarity"
-        ],
-        "result_type":null
+        ]
       },
       {
         "name":"setAllChannelsOff",
-        "parameters":[],
-        "result_type":null
+        "parameters":[]
       },
       {
         "name":"channelOn",
         "parameters":[
           "channel"
         ],
-        "result_type":"bool"
+        "result_info":{
+          "type":"bool"
+        }
       },
       {
         "name":"channelsOn",
         "parameters":[],
-        "result_type":"array"
+        "result_info":{
+          "type":"array",
+          "array_element_type":"long"
+        }
       },
       {
         "name":"addPwm",
@@ -138,7 +137,9 @@ License:
           "on_duration",
           "count"
         ],
-        "result_type":"long"
+        "result_info":{
+          "type":"long"
+        }
       },
       {
         "name":"startPwm",
@@ -149,7 +150,9 @@ License:
           "period",
           "on_duration"
         ],
-        "result_type":"long"
+        "result_info":{
+          "type":"long"
+        }
       },
       {
         "name":"addTogglePwm",
@@ -161,7 +164,9 @@ License:
           "on_duration",
           "count"
         ],
-        "result_type":"long"
+        "result_info":{
+          "type":"long"
+        }
       },
       {
         "name":"startTogglePwm",
@@ -172,29 +177,35 @@ License:
           "period",
           "on_duration"
         ],
-        "result_type":"long"
+        "result_info":{
+          "type":"long"
+        }
       },
       {
         "name":"stopPwm",
         "parameters":[
           "pwm_index"
-        ],
-        "result_type":null
+        ]
       },
       {
         "name":"stopAllPwm",
-        "parameters":[],
-        "result_type":null
+        "parameters":[]
       },
       {
         "name":"boardSwitchEnabled",
         "parameters":[],
-        "result_type":"array"
+        "result_info":{
+          "type":"array",
+          "array_element_type":"bool"
+        }
       },
       {
         "name":"boardSwitchAndPropertyEnabled",
         "parameters":[],
-        "result_type":"array"
+        "result_info":{
+          "type":"array",
+          "array_element_type":"bool"
+        }
       }
     ],
     "parameters":[
@@ -204,7 +215,8 @@ License:
       },
       {
         "name":"channels",
-        "type":"array"
+        "type":"array",
+        "array_element_type":"long"
       },
       {
         "name":"polarity",
@@ -212,23 +224,23 @@ License:
       },
       {
         "name":"delay",
-        "units":"ms",
-        "type":"long"
+        "type":"long",
+        "units":"ms"
       },
       {
         "name":"period",
-        "units":"ms",
-        "type":"long"
+        "type":"long",
+        "units":"ms"
       },
       {
         "name":"on_duration",
-        "units":"ms",
-        "type":"long"
+        "type":"long",
+        "units":"ms"
       },
       {
         "name":"count",
-        "units":"ms",
-        "type":"long"
+        "type":"long",
+        "units":"ms"
       },
       {
         "name":"pwm_index",
@@ -238,11 +250,51 @@ License:
     "properties":[
       {
         "name":"polarityReversed",
-        "type":"array"
+        "type":"array",
+        "array_element_type":"bool",
+        "functions":[
+          "getValue",
+          "setValue",
+          "getDefaultValue",
+          "setValueToDefault",
+          "getElementValue",
+          "setElementValue",
+          "getDefaultElementValue",
+          "setElementValueToDefault",
+          "setAllElementValues",
+          "getArrayLength",
+          "setArrayLength"
+        ],
+        "parameters":[
+          "value",
+          "element_index",
+          "element_value",
+          "array_length"
+        ]
       },
       {
         "name":"channelsEnabled",
-        "type":"array"
+        "type":"array",
+        "array_element_type":"bool",
+        "functions":[
+          "getValue",
+          "setValue",
+          "getDefaultValue",
+          "setValueToDefault",
+          "getElementValue",
+          "setElementValue",
+          "getDefaultElementValue",
+          "setElementValueToDefault",
+          "setAllElementValues",
+          "getArrayLength",
+          "setArrayLength"
+        ],
+        "parameters":[
+          "value",
+          "element_index",
+          "element_value",
+          "array_length"
+        ]
       }
     ],
     "callbacks":[]

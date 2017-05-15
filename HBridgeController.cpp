@@ -132,6 +132,7 @@ void HBridgeController::setup()
   modular_server::Function & channels_on_function = modular_server_.createFunction(constants::channels_on_function_name);
   channels_on_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::channelsOnHandler));
   channels_on_function.setResultTypeArray();
+  channels_on_function.setResultTypeLong();
 
   modular_server::Function & add_pwm_function = modular_server_.createFunction(constants::add_pwm_function_name);
   add_pwm_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::addPwmHandler));
@@ -181,10 +182,12 @@ void HBridgeController::setup()
   modular_server::Function & board_switch_enabled_function = modular_server_.createFunction(constants::board_switch_enabled_function_name);
   board_switch_enabled_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::boardSwitchEnabledHandler));
   board_switch_enabled_function.setResultTypeArray();
+  board_switch_enabled_function.setResultTypeBool();
 
   modular_server::Function & board_switch_and_property_enabled_function = modular_server_.createFunction(constants::board_switch_and_property_enabled_function_name);
   board_switch_and_property_enabled_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::boardSwitchAndPropertyEnabledHandler));
   board_switch_and_property_enabled_function.setResultTypeArray();
+  board_switch_and_property_enabled_function.setResultTypeBool();
 
   // Callbacks
 
