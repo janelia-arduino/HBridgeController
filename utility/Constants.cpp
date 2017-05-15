@@ -31,7 +31,7 @@ const int bad_index = -1;
 // Interrupts
 
 // Units
-CONSTANT_STRING(ms_unit,"ms");
+CONSTANT_STRING(ms_units,"ms");
 
 // Properties
 CONSTANT_STRING(polarity_reversed_property_name,"polarityReversed");

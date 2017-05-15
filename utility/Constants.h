@@ -45,7 +45,7 @@ struct PulseInfo
 // Interrupts
 
 // Units
-extern ConstantString ms_unit;
+extern ConstantString ms_units;
 
 // Properties
 // Property values must be long, double, bool, long[], double[], bool[], char[], ConstantString *, (ConstantString *)[]

@@ -81,19 +81,19 @@ void HBridgeController::setup()
 
   modular_server::Parameter & delay_parameter = modular_server_.createParameter(constants::delay_parameter_name);
   delay_parameter.setRange(constants::delay_min,constants::delay_max);
-  delay_parameter.setUnits(constants::ms_unit);
+  delay_parameter.setUnits(constants::ms_units);
 
   modular_server::Parameter & period_parameter = modular_server_.createParameter(constants::period_parameter_name);
   period_parameter.setRange(constants::period_min,constants::period_max);
-  period_parameter.setUnits(constants::ms_unit);
+  period_parameter.setUnits(constants::ms_units);
 
   modular_server::Parameter & on_duration_parameter = modular_server_.createParameter(constants::on_duration_parameter_name);
   on_duration_parameter.setRange(constants::on_duration_min,constants::on_duration_max);
-  on_duration_parameter.setUnits(constants::ms_unit);
+  on_duration_parameter.setUnits(constants::ms_units);
 
   modular_server::Parameter & count_parameter = modular_server_.createParameter(constants::count_parameter_name);
   count_parameter.setRange(constants::count_min,constants::count_max);
-  count_parameter.setUnits(constants::ms_unit);
+  count_parameter.setUnits(constants::ms_units);
 
   modular_server::Parameter & pwm_index_parameter = modular_server_.createParameter(constants::pwm_index_parameter_name);
   pwm_index_parameter.setRange(0,constants::INDEXED_PULSES_COUNT_MAX-1);
@@ -127,11 +127,11 @@ void HBridgeController::setup()
   modular_server::Function & channel_on_function = modular_server_.createFunction(constants::channel_on_function_name);
   channel_on_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::channelOnHandler));
   channel_on_function.addParameter(channel_parameter);
-  channel_on_function.setReturnTypeBool();
+  channel_on_function.setResultTypeBool();
 
   modular_server::Function & channels_on_function = modular_server_.createFunction(constants::channels_on_function_name);
   channels_on_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::channelsOnHandler));
-  channels_on_function.setReturnTypeArray();
+  channels_on_function.setResultTypeArray();
 
   modular_server::Function & add_pwm_function = modular_server_.createFunction(constants::add_pwm_function_name);
   add_pwm_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::addPwmHandler));
@@ -141,7 +141,7 @@ void HBridgeController::setup()
   add_pwm_function.addParameter(period_parameter);
   add_pwm_function.addParameter(on_duration_parameter);
   add_pwm_function.addParameter(count_parameter);
-  add_pwm_function.setReturnTypeLong();
+  add_pwm_function.setResultTypeLong();
 
   modular_server::Function & start_pwm_function = modular_server_.createFunction(constants::start_pwm_function_name);
   start_pwm_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::startPwmHandler));
@@ -150,7 +150,7 @@ void HBridgeController::setup()
   start_pwm_function.addParameter(delay_parameter);
   start_pwm_function.addParameter(period_parameter);
   start_pwm_function.addParameter(on_duration_parameter);
-  start_pwm_function.setReturnTypeLong();
+  start_pwm_function.setResultTypeLong();
 
   modular_server::Function & add_toggle_pwm_function = modular_server_.createFunction(constants::add_toggle_pwm_function_name);
   add_toggle_pwm_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::addTogglePwmHandler));
@@ -160,7 +160,7 @@ void HBridgeController::setup()
   add_toggle_pwm_function.addParameter(period_parameter);
   add_toggle_pwm_function.addParameter(on_duration_parameter);
   add_toggle_pwm_function.addParameter(count_parameter);
-  add_toggle_pwm_function.setReturnTypeLong();
+  add_toggle_pwm_function.setResultTypeLong();
 
   modular_server::Function & start_toggle_pwm_function = modular_server_.createFunction(constants::start_toggle_pwm_function_name);
   start_toggle_pwm_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::startTogglePwmHandler));
@@ -169,7 +169,7 @@ void HBridgeController::setup()
   start_toggle_pwm_function.addParameter(delay_parameter);
   start_toggle_pwm_function.addParameter(period_parameter);
   start_toggle_pwm_function.addParameter(on_duration_parameter);
-  start_toggle_pwm_function.setReturnTypeLong();
+  start_toggle_pwm_function.setResultTypeLong();
 
   modular_server::Function & stop_pwm_function = modular_server_.createFunction(constants::stop_pwm_function_name);
   stop_pwm_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::stopPwmHandler));
@@ -180,11 +180,11 @@ void HBridgeController::setup()
 
   modular_server::Function & board_switch_enabled_function = modular_server_.createFunction(constants::board_switch_enabled_function_name);
   board_switch_enabled_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::boardSwitchEnabledHandler));
-  board_switch_enabled_function.setReturnTypeArray();
+  board_switch_enabled_function.setResultTypeArray();
 
   modular_server::Function & board_switch_and_property_enabled_function = modular_server_.createFunction(constants::board_switch_and_property_enabled_function_name);
   board_switch_and_property_enabled_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&HBridgeController::boardSwitchAndPropertyEnabledHandler));
-  board_switch_and_property_enabled_function.setReturnTypeArray();
+  board_switch_and_property_enabled_function.setResultTypeArray();
 
   // Callbacks
 
