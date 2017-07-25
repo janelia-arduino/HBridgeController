@@ -62,7 +62,7 @@ void HBridgeController::setup()
                               functions_,
                               callbacks_);
   // Properties
-  modular_server::Property & polarity_reversed_property = modular_server_.createProperty(constants::polarity_reversed_property_name,constants::polarity_reversed_default);
+  modular_server_.createProperty(constants::polarity_reversed_property_name,constants::polarity_reversed_default);
 
   modular_server::Property & channels_enabled_property = modular_server_.createProperty(constants::channels_enabled_property_name,constants::channels_enabled_default);
   channels_enabled_property.attachPostSetElementValueFunctor(makeFunctor((Functor1<const size_t> *)0,*this,&HBridgeController::setChannelOff));
