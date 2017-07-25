@@ -25,6 +25,8 @@ extern const size_t enable_pins[CHANNEL_COUNT];
 extern const size_t dir_a_pins[CHANNEL_COUNT];
 extern const size_t dir_b_pins[CHANNEL_COUNT];
 extern const size_t sense_pins[CHANNEL_COUNT];
+extern const size_t user_enable_pins[CHANNEL_COUNT];
+extern const uint8_t user_enabled_polarity[CHANNEL_COUNT];
 
 // Interrupts
 
@@ -61,6 +63,8 @@ extern const size_t enable_pins[CHANNEL_COUNT];
 extern const size_t dir_a_pins[CHANNEL_COUNT];
 extern const size_t dir_b_pins[CHANNEL_COUNT];
 extern const size_t sense_pins[CHANNEL_COUNT];
+extern const size_t user_enable_pins[CHANNEL_COUNT];
+extern const uint8_t user_enabled_polarity[CHANNEL_COUNT];
 
 // Interrupts
 extern ConstantString bnc_b_interrupt_name;
