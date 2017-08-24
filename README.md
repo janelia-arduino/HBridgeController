@@ -22,13 +22,14 @@ License:
 
 [h_bridge_controller](https://github.com/janelia-modular-devices/h_bridge_controller.git)
 
-## API
+## API NAMES
 
 ```json
 {
   "id":"getApi",
   "result":{
     "firmware":["HBridgeController"],
+    "verbosity":"NAMES",
     "functions":[
       "setChannelOn",
       "setChannelOff",
@@ -60,15 +61,14 @@ License:
     "properties":[
       "polarityReversed",
       "channelsEnabled"
-    ],
-    "callbacks":[]
+    ]
   }
 }
 ```
 
-## API Verbose
+## API GENERAL
 
-[API Verbose](./api/)
+[API GENERAL](./api/)
 
 ## More Detailed Modular Device Information
 
