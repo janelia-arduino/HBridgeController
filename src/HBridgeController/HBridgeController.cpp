@@ -5,7 +5,7 @@
 // Authors:
 // Peter Polidoro polidorop@janelia.hhmi.org
 // ----------------------------------------------------------------------------
-#include "HBridgeController.h"
+#include "../HBridgeController.h"
 
 
 using namespace h_bridge_controller;

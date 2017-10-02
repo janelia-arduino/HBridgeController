@@ -7,10 +7,10 @@
 // ----------------------------------------------------------------------------
 #ifndef H_BRIDGE_CONTROLLER_CONSTANTS_H
 #define H_BRIDGE_CONTROLLER_CONSTANTS_H
-#include "ConstantVariable.h"
-#include "ModularServer.h"
+#include <ConstantVariable.h>
+#include <ModularServer.h>
 
-#include "EventController.h"
+#include <EventController.h>
 
 
 namespace h_bridge_controller
