@@ -26,11 +26,13 @@ License:
 
 ```json
 {
-  "id":"getApi",
-  "result":{
-    "firmware":["HBridgeController"],
-    "verbosity":"NAMES",
-    "functions":[
+  "id": "getApi",
+  "result": {
+    "firmware": [
+      "HBridgeController"
+    ],
+    "verbosity": "NAMES",
+    "functions": [
       "setChannelOn",
       "setChannelOff",
       "setChannelsOn",
@@ -48,7 +50,7 @@ License:
       "boardSwitchEnabled",
       "boardSwitchAndPropertyEnabled"
     ],
-    "parameters":[
+    "parameters": [
       "channel",
       "channels",
       "polarity",
@@ -58,7 +60,7 @@ License:
       "count",
       "pwm_index"
     ],
-    "properties":[
+    "properties": [
       "polarityReversed",
       "channelsEnabled"
     ]
