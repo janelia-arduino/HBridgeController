@@ -214,7 +214,7 @@ void HBridgeController::update()
   }
 }
 
-void HBridgeController::setChannelOn(const size_t channel, const ConstantString * polarity_ptr)
+void HBridgeController::setChannelOn(const size_t channel, const ConstantString * const polarity_ptr)
 {
   if (!boardSwitchAndPropertyEnabled(channel))
   {
@@ -248,7 +248,7 @@ void HBridgeController::setChannelOff(const size_t channel)
   channels_on_[channel] = false;
 }
 
-void HBridgeController::setChannelsOn(const uint32_t channels, const ConstantString * polarity_ptr)
+void HBridgeController::setChannelsOn(const uint32_t channels, const ConstantString * const polarity_ptr)
 {
   uint32_t bit = 1;
   for (int channel=0; channel<constants::CHANNEL_COUNT; ++channel)
@@ -272,7 +272,7 @@ void HBridgeController::setChannelsOff(const uint32_t channels)
   }
 }
 
-void HBridgeController::setAllChannelsOn(const ConstantString * polarity_ptr)
+void HBridgeController::setAllChannelsOn(const ConstantString * const polarity_ptr)
 {
   for (int channel=0; channel<constants::CHANNEL_COUNT; ++channel)
   {
@@ -308,7 +308,7 @@ uint32_t HBridgeController::channelsOn()
 }
 
 int HBridgeController::addPwm(const uint32_t channels,
-                              const ConstantString * polarity_ptr,
+                              const ConstantString * const polarity_ptr,
                               const long delay,
                               const long period,
                               const long on_duration,
@@ -337,7 +337,7 @@ int HBridgeController::addPwm(const uint32_t channels,
 }
 
 int HBridgeController::startPwm(const uint32_t channels,
-                                const ConstantString * polarity_ptr,
+                                const ConstantString * const polarity_ptr,
                                 const long delay,
                                 const long period,
                                 const long on_duration)
@@ -364,7 +364,7 @@ int HBridgeController::startPwm(const uint32_t channels,
 }
 
 int HBridgeController::addTogglePwm(const uint32_t channels,
-                                    const ConstantString * polarity_ptr,
+                                    const ConstantString * const polarity_ptr,
                                     const long delay,
                                     const long period,
                                     const long on_duration,
@@ -393,7 +393,7 @@ int HBridgeController::addTogglePwm(const uint32_t channels,
 }
 
 int HBridgeController::startTogglePwm(const uint32_t channels,
-                                      const ConstantString * polarity_ptr,
+                                      const ConstantString * const polarity_ptr,
                                       const long delay,
                                       const long period,
                                       const long on_duration)
