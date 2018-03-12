@@ -39,41 +39,40 @@ public:
   HBridgeController();
   virtual void setup();
   virtual void update();
-  void setChannelOn(const size_t channel, const ConstantString & polarity);
+  void setChannelOn(const size_t channel, const ConstantString * polarity_ptr);
   void setChannelOff(const size_t channel);
-  void setChannelsOn(const uint32_t channels, const ConstantString & polarity);
+  void setChannelsOn(const uint32_t channels, const ConstantString * polarity_ptr);
   void setChannelsOff(const uint32_t channels);
-  void setAllChannelsOn(const ConstantString & polarity);
+  void setAllChannelsOn(const ConstantString * polarity_ptr);
   void setAllChannelsOff();
   bool channelOn(const size_t channel);
   uint32_t channelsOn();
 
   int addPwm(const uint32_t channels,
-             const ConstantString & polarity,
+             const ConstantString * polarity_ptr,
              const long delay,
              const long period,
              const long on_duration,
              const long count);
   int startPwm(const uint32_t channels,
-               const ConstantString & polarity,
+               const ConstantString * polarity_ptr,
                const long delay,
                const long period,
                const long on_duration);
   int addTogglePwm(const uint32_t channels,
-                   const ConstantString & polarity,
+                   const ConstantString * polarity_ptr,
                    const long delay,
                    const long period,
                    const long on_duration,
                    const long count);
   int startTogglePwm(const uint32_t channels,
-                     const ConstantString & polarity,
+                     const ConstantString * polarity_ptr,
                      const long delay,
                      const long period,
                      const long on_duration);
   void stopPwm(const int pwm_index);
   void stopAllPwm();
   uint32_t arrayToChannels(ArduinoJson::JsonArray & channels_array);
-  const ConstantString & stringToPolarity(const char * string);
 
   bool boardSwitchEnabled(const size_t channel);
   bool boardSwitchAndPropertyEnabled(const size_t channel);
