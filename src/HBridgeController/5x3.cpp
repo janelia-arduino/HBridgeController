@@ -70,17 +70,6 @@ const size_t user_enable_pins[CHANNEL_COUNT] = {5,6,28,29};
 const uint8_t user_enabled_polarity[CHANNEL_COUNT] = {LOW,LOW,LOW,LOW};
 
 // Pins
-CONSTANT_STRING(bnc_b_pin_name,"bnc_b");
-const size_t bnc_b_pin = 3;
-
-CONSTANT_STRING(switch_0_pin_name,"switch_0");
-const size_t switch_0_pin = 21;
-
-CONSTANT_STRING(switch_1_pin_name,"switch_1");
-const size_t switch_1_pin = 20;
-
-CONSTANT_STRING(switch_2_pin_name,"switch_2");
-const size_t switch_2_pin = 2;
 
 // Units
 
