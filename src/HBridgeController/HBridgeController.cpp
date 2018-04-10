@@ -40,21 +40,21 @@ void HBridgeController::setup()
 
   // Add Hardware
   modular_server_.addHardware(constants::hardware_info,
-                              interrupts_);
+                              pins_);
 
-  // Interrupts
+  // Pins
 #if defined(__AVR_ATmega2560__)
-  modular_server::Interrupt & bnc_b_interrupt = modular_server_.createInterrupt(constants::bnc_b_interrupt_name,
-                                                                                constants::bnc_b_pin);
+  modular_server::Pin & bnc_b_pin = modular_server_.createPin(constants::bnc_b_pin_name,
+                                                              constants::bnc_b_pin);
 
-  modular_server::Interrupt & switch_0_interrupt = modular_server_.createInterrupt(constants::switch_0_interrupt_name,
-                                                                                   constants::switch_0_pin);
+  modular_server::Pin & switch_0_pin = modular_server_.createPin(constants::switch_0_pin_name,
+                                                                 constants::switch_0_pin);
 
-  modular_server::Interrupt & switch_1_interrupt = modular_server_.createInterrupt(constants::switch_1_interrupt_name,
-                                                                                   constants::switch_1_pin);
+  modular_server::Pin & switch_1_pin = modular_server_.createPin(constants::switch_1_pin_name,
+                                                                 constants::switch_1_pin);
 
-  modular_server::Interrupt & switch_2_interrupt = modular_server_.createInterrupt(constants::switch_2_interrupt_name,
-                                                                                   constants::switch_2_pin);
+  modular_server::Pin & switch_2_pin = modular_server_.createPin(constants::switch_2_pin_name,
+                                                                 constants::switch_2_pin);
 
 #endif
 

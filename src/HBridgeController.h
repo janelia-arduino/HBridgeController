@@ -69,7 +69,7 @@ public:
   virtual void stopPwmHandler(int index);
 
 private:
-  modular_server::Interrupt interrupts_[h_bridge_controller::constants::INTERRUPT_COUNT_MAX];
+  modular_server::Pin pins_[h_bridge_controller::constants::PIN_COUNT_MAX];
 
   modular_server::Property properties_[h_bridge_controller::constants::PROPERTY_COUNT_MAX];
   modular_server::Parameter parameters_[h_bridge_controller::constants::PARAMETER_COUNT_MAX];
