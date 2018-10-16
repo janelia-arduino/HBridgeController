@@ -54,7 +54,7 @@ void HBridgeController::setup()
   modular_server_.createProperty(constants::polarity_reversed_property_name,constants::polarity_reversed_default);
 
   modular_server::Property & channels_enabled_property = modular_server_.createProperty(constants::channels_enabled_property_name,constants::channels_enabled_default);
-  channels_enabled_property.attachPostSetElementValueFunctor(makeFunctor((Functor1<const size_t> *)0,*this,&HBridgeController::setChannelOff));
+  channels_enabled_property.attachPostSetElementValueFunctor(makeFunctor((Functor1<size_t> *)0,*this,&HBridgeController::setChannelOff));
 
   // Parameters
   modular_server::Parameter & channel_parameter = modular_server_.createParameter(constants::channel_parameter_name);
@@ -200,7 +200,8 @@ void HBridgeController::update()
   }
 }
 
-void HBridgeController::setChannelOn(const size_t channel, const ConstantString * const polarity_ptr)
+void HBridgeController::setChannelOn(size_t channel,
+  const ConstantString * const polarity_ptr)
 {
   if (!boardSwitchAndPropertyEnabled(channel))
   {
@@ -228,13 +229,14 @@ void HBridgeController::setChannelOn(const size_t channel, const ConstantString 
   channels_on_[channel] = true;
 }
 
-void HBridgeController::setChannelOff(const size_t channel)
+void HBridgeController::setChannelOff(size_t channel)
 {
   digitalWrite(constants::enable_pins[channel],LOW);
   channels_on_[channel] = false;
 }
 
-void HBridgeController::setChannelsOn(const uint32_t channels, const ConstantString * const polarity_ptr)
+void HBridgeController::setChannelsOn(uint32_t channels,
+  const ConstantString * const polarity_ptr)
 {
   uint32_t bit = 1;
   for (int channel=0; channel<constants::CHANNEL_COUNT; ++channel)
@@ -246,7 +248,7 @@ void HBridgeController::setChannelsOn(const uint32_t channels, const ConstantStr
   }
 }
 
-void HBridgeController::setChannelsOff(const uint32_t channels)
+void HBridgeController::setChannelsOff(uint32_t channels)
 {
   uint32_t bit = 1;
   for (int channel=0; channel<constants::CHANNEL_COUNT; ++channel)
@@ -274,7 +276,7 @@ void HBridgeController::setAllChannelsOff()
   }
 }
 
-bool HBridgeController::channelOn(const size_t channel)
+bool HBridgeController::channelOn(size_t channel)
 {
   return channels_on_[channel];
 }
@@ -293,12 +295,12 @@ uint32_t HBridgeController::channelsOn()
   return channels_on;
 }
 
-int HBridgeController::addPwm(const uint32_t channels,
+int HBridgeController::addPwm(uint32_t channels,
   const ConstantString * const polarity_ptr,
-  const long delay,
-  const long period,
-  const long on_duration,
-  const long count)
+  long delay,
+  long period,
+  long on_duration,
+  long count)
 {
   if (indexed_pulses_.full())
   {
@@ -322,11 +324,11 @@ int HBridgeController::addPwm(const uint32_t channels,
   return index;
 }
 
-int HBridgeController::startPwm(const uint32_t channels,
+int HBridgeController::startPwm(uint32_t channels,
   const ConstantString * const polarity_ptr,
-  const long delay,
-  const long period,
-  const long on_duration)
+  long delay,
+  long period,
+  long on_duration)
 {
   if (indexed_pulses_.full())
   {
@@ -349,12 +351,12 @@ int HBridgeController::startPwm(const uint32_t channels,
   return index;
 }
 
-int HBridgeController::addTogglePwm(const uint32_t channels,
+int HBridgeController::addTogglePwm(uint32_t channels,
   const ConstantString * const polarity_ptr,
-  const long delay,
-  const long period,
-  const long on_duration,
-  const long count)
+  long delay,
+  long period,
+  long on_duration,
+  long count)
 {
   if (indexed_pulses_.full())
   {
@@ -378,11 +380,11 @@ int HBridgeController::addTogglePwm(const uint32_t channels,
   return index;
 }
 
-int HBridgeController::startTogglePwm(const uint32_t channels,
+int HBridgeController::startTogglePwm(uint32_t channels,
   const ConstantString * const polarity_ptr,
-  const long delay,
-  const long period,
-  const long on_duration)
+  long delay,
+  long period,
+  long on_duration)
 {
   if (indexed_pulses_.full())
   {
@@ -405,7 +407,7 @@ int HBridgeController::startTogglePwm(const uint32_t channels,
   return index;
 }
 
-void HBridgeController::stopPwm(const int pwm_index)
+void HBridgeController::stopPwm(int pwm_index)
 {
   if (pwm_index < 0)
   {
@@ -440,12 +442,12 @@ uint32_t HBridgeController::arrayToChannels(ArduinoJson::JsonArray & channels_ar
   return channels;
 }
 
-bool HBridgeController::boardSwitchEnabled(const size_t channel)
+bool HBridgeController::boardSwitchEnabled(size_t channel)
 {
   return board_switch_enabled_[channel];
 }
 
-bool HBridgeController::boardSwitchAndPropertyEnabled(const size_t channel)
+bool HBridgeController::boardSwitchAndPropertyEnabled(size_t channel)
 {
   bool channel_enabled;
   modular_server_.property(constants::channels_enabled_property_name).getElementValue(channel,
