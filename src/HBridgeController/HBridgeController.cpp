@@ -40,16 +40,16 @@ void HBridgeController::setup()
 
   // Add Hardware
   modular_server_.addHardware(constants::hardware_info,
-                              pins_);
+    pins_);
 
   // Pins
 
   // Add Firmware
   modular_server_.addFirmware(constants::firmware_info,
-                              properties_,
-                              parameters_,
-                              functions_,
-                              callbacks_);
+    properties_,
+    parameters_,
+    functions_,
+    callbacks_);
   // Properties
   modular_server_.createProperty(constants::polarity_reversed_property_name,constants::polarity_reversed_default);
 
@@ -191,7 +191,7 @@ void HBridgeController::update()
   for (int channel=0; channel<constants::CHANNEL_COUNT; ++channel)
   {
     enabled = (digitalRead(constants::user_enable_pins[channel]) ==
-               constants::user_enabled_polarity[channel]);
+      constants::user_enabled_polarity[channel]);
     board_switch_enabled_[channel] = enabled;
     if (!enabled && channelOn(channel))
     {
@@ -208,7 +208,7 @@ void HBridgeController::setChannelOn(const size_t channel, const ConstantString 
   }
   bool channel_polarity_reversed;
   modular_server_.property(constants::polarity_reversed_property_name).getElementValue(channel,
-                                                                                       channel_polarity_reversed);
+    channel_polarity_reversed);
   const ConstantString * polarity_corrected_ptr = polarity_ptr;
   if (channel_polarity_reversed)
   {
@@ -294,11 +294,11 @@ uint32_t HBridgeController::channelsOn()
 }
 
 int HBridgeController::addPwm(const uint32_t channels,
-                              const ConstantString * const polarity_ptr,
-                              const long delay,
-                              const long period,
-                              const long on_duration,
-                              const long count)
+  const ConstantString * const polarity_ptr,
+  const long delay,
+  const long period,
+  const long on_duration,
+  const long count)
 {
   if (indexed_pulses_.full())
   {
@@ -309,12 +309,12 @@ int HBridgeController::addPwm(const uint32_t channels,
   pulse_info.polarity_ptr = polarity_ptr;
   int index = indexed_pulses_.add(pulse_info);
   EventIdPair event_id_pair = event_controller_.addPwmUsingDelay(makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOnHandler),
-                                                                 makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOffHandler),
-                                                                 delay,
-                                                                 period,
-                                                                 on_duration,
-                                                                 count,
-                                                                 index);
+    makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOffHandler),
+    delay,
+    period,
+    on_duration,
+    count,
+    index);
   event_controller_.addStartFunctor(event_id_pair,makeFunctor((Functor1<int> *)0,*this,&HBridgeController::startPwmHandler));
   event_controller_.addStopFunctor(event_id_pair,makeFunctor((Functor1<int> *)0,*this,&HBridgeController::stopPwmHandler));
   indexed_pulses_[index].event_id_pair = event_id_pair;
@@ -323,10 +323,10 @@ int HBridgeController::addPwm(const uint32_t channels,
 }
 
 int HBridgeController::startPwm(const uint32_t channels,
-                                const ConstantString * const polarity_ptr,
-                                const long delay,
-                                const long period,
-                                const long on_duration)
+  const ConstantString * const polarity_ptr,
+  const long delay,
+  const long period,
+  const long on_duration)
 {
   if (indexed_pulses_.full())
   {
@@ -337,11 +337,11 @@ int HBridgeController::startPwm(const uint32_t channels,
   pulse_info.polarity_ptr = polarity_ptr;
   int index = indexed_pulses_.add(pulse_info);
   EventIdPair event_id_pair = event_controller_.addInfinitePwmUsingDelay(makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOnHandler),
-                                                                         makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOffHandler),
-                                                                         delay,
-                                                                         period,
-                                                                         on_duration,
-                                                                         index);
+    makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOffHandler),
+    delay,
+    period,
+    on_duration,
+    index);
   event_controller_.addStartFunctor(event_id_pair,makeFunctor((Functor1<int> *)0,*this,&HBridgeController::startPwmHandler));
   event_controller_.addStopFunctor(event_id_pair,makeFunctor((Functor1<int> *)0,*this,&HBridgeController::stopPwmHandler));
   indexed_pulses_[index].event_id_pair = event_id_pair;
@@ -350,11 +350,11 @@ int HBridgeController::startPwm(const uint32_t channels,
 }
 
 int HBridgeController::addTogglePwm(const uint32_t channels,
-                                    const ConstantString * const polarity_ptr,
-                                    const long delay,
-                                    const long period,
-                                    const long on_duration,
-                                    const long count)
+  const ConstantString * const polarity_ptr,
+  const long delay,
+  const long period,
+  const long on_duration,
+  const long count)
 {
   if (indexed_pulses_.full())
   {
@@ -365,12 +365,12 @@ int HBridgeController::addTogglePwm(const uint32_t channels,
   pulse_info.polarity_ptr = polarity_ptr;
   int index = indexed_pulses_.add(pulse_info);
   EventIdPair event_id_pair = event_controller_.addPwmUsingDelay(makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOnHandler),
-                                                                 makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOnReversedHandler),
-                                                                 delay,
-                                                                 period,
-                                                                 on_duration,
-                                                                 count,
-                                                                 index);
+    makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOnReversedHandler),
+    delay,
+    period,
+    on_duration,
+    count,
+    index);
   event_controller_.addStartFunctor(event_id_pair,makeFunctor((Functor1<int> *)0,*this,&HBridgeController::startPwmHandler));
   event_controller_.addStopFunctor(event_id_pair,makeFunctor((Functor1<int> *)0,*this,&HBridgeController::stopPwmHandler));
   indexed_pulses_[index].event_id_pair = event_id_pair;
@@ -379,10 +379,10 @@ int HBridgeController::addTogglePwm(const uint32_t channels,
 }
 
 int HBridgeController::startTogglePwm(const uint32_t channels,
-                                      const ConstantString * const polarity_ptr,
-                                      const long delay,
-                                      const long period,
-                                      const long on_duration)
+  const ConstantString * const polarity_ptr,
+  const long delay,
+  const long period,
+  const long on_duration)
 {
   if (indexed_pulses_.full())
   {
@@ -393,11 +393,11 @@ int HBridgeController::startTogglePwm(const uint32_t channels,
   pulse_info.polarity_ptr = polarity_ptr;
   int index = indexed_pulses_.add(pulse_info);
   EventIdPair event_id_pair = event_controller_.addInfinitePwmUsingDelay(makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOnHandler),
-                                                                         makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOnReversedHandler),
-                                                                         delay,
-                                                                         period,
-                                                                         on_duration,
-                                                                         index);
+    makeFunctor((Functor1<int> *)0,*this,&HBridgeController::setChannelsOnReversedHandler),
+    delay,
+    period,
+    on_duration,
+    index);
   event_controller_.addStartFunctor(event_id_pair,makeFunctor((Functor1<int> *)0,*this,&HBridgeController::startPwmHandler));
   event_controller_.addStopFunctor(event_id_pair,makeFunctor((Functor1<int> *)0,*this,&HBridgeController::stopPwmHandler));
   indexed_pulses_[index].event_id_pair = event_id_pair;
@@ -449,7 +449,7 @@ bool HBridgeController::boardSwitchAndPropertyEnabled(const size_t channel)
 {
   bool channel_enabled;
   modular_server_.property(constants::channels_enabled_property_name).getElementValue(channel,
-                                                                                      channel_enabled);
+    channel_enabled);
   return (channel_enabled && boardSwitchEnabled(channel));
 }
 

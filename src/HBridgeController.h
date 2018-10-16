@@ -36,27 +36,27 @@ public:
   uint32_t channelsOn();
 
   int addPwm(const uint32_t channels,
-             const ConstantString * const polarity_ptr,
-             const long delay,
-             const long period,
-             const long on_duration,
-             const long count);
+    const ConstantString * const polarity_ptr,
+    const long delay,
+    const long period,
+    const long on_duration,
+    const long count);
   int startPwm(const uint32_t channels,
-               const ConstantString * const polarity_ptr,
-               const long delay,
-               const long period,
-               const long on_duration);
+    const ConstantString * const polarity_ptr,
+    const long delay,
+    const long period,
+    const long on_duration);
   int addTogglePwm(const uint32_t channels,
-                   const ConstantString * const polarity_ptr,
-                   const long delay,
-                   const long period,
-                   const long on_duration,
-                   const long count);
+    const ConstantString * const polarity_ptr,
+    const long delay,
+    const long period,
+    const long on_duration,
+    const long count);
   int startTogglePwm(const uint32_t channels,
-                     const ConstantString * const polarity_ptr,
-                     const long delay,
-                     const long period,
-                     const long on_duration);
+    const ConstantString * const polarity_ptr,
+    const long delay,
+    const long period,
+    const long on_duration);
   void stopPwm(const int pwm_index);
   void stopAllPwm();
   uint32_t arrayToChannels(ArduinoJson::JsonArray & channels_array);
@@ -79,7 +79,7 @@ private:
   EventController<h_bridge_controller::constants::EVENT_COUNT_MAX> event_controller_;
 
   IndexedContainer<h_bridge_controller::constants::PulseInfo,
-                   h_bridge_controller::constants::INDEXED_PULSES_COUNT_MAX> indexed_pulses_;
+    h_bridge_controller::constants::INDEXED_PULSES_COUNT_MAX> indexed_pulses_;
 
   bool board_switch_enabled_[h_bridge_controller::constants::CHANNEL_COUNT];
   bool channels_on_[h_bridge_controller::constants::CHANNEL_COUNT];
