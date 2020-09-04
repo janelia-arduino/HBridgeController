@@ -428,15 +428,12 @@ void HBridgeController::stopAllPwm()
   }
 }
 
-uint32_t HBridgeController::arrayToChannels(ArduinoJson::JsonArray & channels_array)
+uint32_t HBridgeController::arrayToChannels(ArduinoJson::JsonArray channels_array)
 {
   uint32_t channels = 0;
   uint32_t bit = 1;
-  for (ArduinoJson::JsonArray::iterator channels_it=channels_array.begin();
-       channels_it != channels_array.end();
-       ++channels_it)
+  for (long channel : channels_array)
   {
-    long channel = *channels_it;
     channels |= bit << channel;
   }
   return channels;
@@ -462,8 +459,8 @@ bool HBridgeController::boardSwitchAndPropertyEnabled(size_t channel)
 // floating-point number (float, double)
 // bool
 // const char *
-// ArduinoJson::JsonArray *
-// ArduinoJson::JsonObject *
+// ArduinoJson::JsonArray
+// ArduinoJson::JsonObject
 // const ConstantString *
 //
 // For more info read about ArduinoJson parsing https://github.com/janelia-arduino/ArduinoJson
@@ -502,19 +499,19 @@ void HBridgeController::setChannelOffHandler()
 
 void HBridgeController::setChannelsOnHandler()
 {
-  ArduinoJson::JsonArray * channels_array_ptr;
-  modular_server_.parameter(constants::channels_parameter_name).getValue(channels_array_ptr);
+  ArduinoJson::JsonArray channels_array;
+  modular_server_.parameter(constants::channels_parameter_name).getValue(channels_array);
   const ConstantString * polarity_ptr;
   modular_server_.parameter(constants::polarity_parameter_name).getValue(polarity_ptr);
-  const uint32_t channels = arrayToChannels(*channels_array_ptr);
+  const uint32_t channels = arrayToChannels(channels_array);
   setChannelsOn(channels,polarity_ptr);
 }
 
 void HBridgeController::setChannelsOffHandler()
 {
-  ArduinoJson::JsonArray * channels_array_ptr;
-  modular_server_.parameter(constants::channels_parameter_name).getValue(channels_array_ptr);
-  const uint32_t channels = arrayToChannels(*channels_array_ptr);
+  ArduinoJson::JsonArray channels_array;
+  modular_server_.parameter(constants::channels_parameter_name).getValue(channels_array);
+  const uint32_t channels = arrayToChannels(channels_array);
   setChannelsOff(channels);
 }
 
@@ -554,8 +551,8 @@ void HBridgeController::channelsOnHandler()
 
 void HBridgeController::addPwmHandler()
 {
-  ArduinoJson::JsonArray * channels_array_ptr;
-  modular_server_.parameter(constants::channels_parameter_name).getValue(channels_array_ptr);
+  ArduinoJson::JsonArray channels_array;
+  modular_server_.parameter(constants::channels_parameter_name).getValue(channels_array);
   const ConstantString * polarity_ptr;
   modular_server_.parameter(constants::polarity_parameter_name).getValue(polarity_ptr);
   long delay;
@@ -566,7 +563,7 @@ void HBridgeController::addPwmHandler()
   modular_server_.parameter(constants::on_duration_parameter_name).getValue(on_duration);
   long count;
   modular_server_.parameter(constants::count_parameter_name).getValue(count);
-  const uint32_t channels = arrayToChannels(*channels_array_ptr);
+  const uint32_t channels = arrayToChannels(channels_array);
   int index = addPwm(channels,polarity_ptr,delay,period,on_duration,count);
   if (index >= 0)
   {
@@ -580,8 +577,8 @@ void HBridgeController::addPwmHandler()
 
 void HBridgeController::startPwmHandler()
 {
-  ArduinoJson::JsonArray * channels_array_ptr;
-  modular_server_.parameter(constants::channels_parameter_name).getValue(channels_array_ptr);
+  ArduinoJson::JsonArray channels_array;
+  modular_server_.parameter(constants::channels_parameter_name).getValue(channels_array);
   const ConstantString * polarity_ptr;
   modular_server_.parameter(constants::polarity_parameter_name).getValue(polarity_ptr);
   long delay;
@@ -590,7 +587,7 @@ void HBridgeController::startPwmHandler()
   modular_server_.parameter(constants::period_parameter_name).getValue(period);
   long on_duration;
   modular_server_.parameter(constants::on_duration_parameter_name).getValue(on_duration);
-  const uint32_t channels = arrayToChannels(*channels_array_ptr);
+  const uint32_t channels = arrayToChannels(channels_array);
   int index = startPwm(channels,polarity_ptr,delay,period,on_duration);
   if (index >= 0)
   {
@@ -604,8 +601,8 @@ void HBridgeController::startPwmHandler()
 
 void HBridgeController::addTogglePwmHandler()
 {
-  ArduinoJson::JsonArray * channels_array_ptr;
-  modular_server_.parameter(constants::channels_parameter_name).getValue(channels_array_ptr);
+  ArduinoJson::JsonArray channels_array;
+  modular_server_.parameter(constants::channels_parameter_name).getValue(channels_array);
   const ConstantString * polarity_ptr;
   modular_server_.parameter(constants::polarity_parameter_name).getValue(polarity_ptr);
   long delay;
@@ -616,7 +613,7 @@ void HBridgeController::addTogglePwmHandler()
   modular_server_.parameter(constants::on_duration_parameter_name).getValue(on_duration);
   long count;
   modular_server_.parameter(constants::count_parameter_name).getValue(count);
-  const uint32_t channels = arrayToChannels(*channels_array_ptr);
+  const uint32_t channels = arrayToChannels(channels_array);
   int index = addTogglePwm(channels,polarity_ptr,delay,period,on_duration,count);
   if (index >= 0)
   {
@@ -630,8 +627,8 @@ void HBridgeController::addTogglePwmHandler()
 
 void HBridgeController::startTogglePwmHandler()
 {
-  ArduinoJson::JsonArray * channels_array_ptr;
-  modular_server_.parameter(constants::channels_parameter_name).getValue(channels_array_ptr);
+  ArduinoJson::JsonArray channels_array;
+  modular_server_.parameter(constants::channels_parameter_name).getValue(channels_array);
   const ConstantString * polarity_ptr;
   modular_server_.parameter(constants::polarity_parameter_name).getValue(polarity_ptr);
   long delay;
@@ -640,7 +637,7 @@ void HBridgeController::startTogglePwmHandler()
   modular_server_.parameter(constants::period_parameter_name).getValue(period);
   long on_duration;
   modular_server_.parameter(constants::on_duration_parameter_name).getValue(on_duration);
-  const uint32_t channels = arrayToChannels(*channels_array_ptr);
+  const uint32_t channels = arrayToChannels(channels_array);
   int index = startTogglePwm(channels,polarity_ptr,delay,period,on_duration);
   if (index >= 0)
   {

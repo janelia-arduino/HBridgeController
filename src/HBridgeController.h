@@ -61,7 +61,7 @@ public:
     long on_duration);
   void stopPwm(int pwm_index);
   void stopAllPwm();
-  uint32_t arrayToChannels(ArduinoJson::JsonArray & channels_array);
+  uint32_t arrayToChannels(ArduinoJson::JsonArray channels_array);
 
   bool boardSwitchEnabled(size_t channel);
   bool boardSwitchAndPropertyEnabled(size_t channel);
