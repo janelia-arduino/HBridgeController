@@ -1,6 +1,6 @@
 #+TITLE: HBridgeController
 #+AUTHOR: Peter Polidoro
-#+EMAIL: peterpolidoro@gmail.com
+#+EMAIL: peter@polidoro.io
 
 * Library Information
   - Name :: HBridgeController
@@ -8,7 +8,7 @@
   - License :: BSD
   - URL :: https://github.com/janelia-arduino/HBridgeController
   - Author :: Peter Polidoro
-  - Email :: peterpolidoro@gmail.com
+  - Email :: peter@polidoro.io
 
 ** Description
 

@@ -3,7 +3,7 @@
 //
 //
 // Authors:
-// Peter Polidoro peterpolidoro@gmail.com
+// Peter Polidoro peter@polidoro.io
 // ----------------------------------------------------------------------------
 #ifndef H_BRIDGE_CONTROLLER_CONSTANTS_H
 #define H_BRIDGE_CONTROLLER_CONSTANTS_H
